@@ -3,9 +3,11 @@ PROJECT=ssu-social-network
 REGISTRY=gcr.io/$(PROJECT)
 
 .PHONY: ssu-social-network run-images push-images clean
+.PHONY: create-deployment update-deployment
 
 ssu-social-network:
 	docker build -t ssu-social-network:latest -f Dockerfile . 
+	#docker rmi $(REGISTRY)/ssu-social-network:latest
 	docker tag ssu-social-network:latest $(REGISTRY)/ssu-social-network:latest
 
 run-images: ssu-social-network
@@ -13,6 +15,12 @@ run-images: ssu-social-network
 
 push-images:
 	gcloud docker -- push $(REGISTRY)/ssu-social-network:latest
+
+create-deployment:
+	kubectl create -f kubernetes/social-network.yaml
+
+update-deployment:
+	kubectl set image deployment/social-network *=$(REGISTRY)/ssu-social-network:latest
 
 clean:
 	docker rm -f `docker ps -aq`

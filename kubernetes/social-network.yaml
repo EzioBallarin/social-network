@@ -18,3 +18,4 @@ spec:
               name: ssu-social-network
               ports:
               - containerPort: 80
+              imagePullPolicy: Always
