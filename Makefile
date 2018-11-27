@@ -9,8 +9,10 @@ ssu-social-network:
 	docker tag ssu-social-network:latest $(REGISTRY)/ssu-social-network:latest
 
 run-images: ssu-social-network
+	docker run -d --name nodejs -p 80:80 ssu-social-network
 
 push-images:
 	gcloud docker -- push $(REGISTRY)/ssu-social-network:latest
 
 clean:
+	docker rm -f `docker ps -aq`
