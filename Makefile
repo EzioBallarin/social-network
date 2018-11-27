@@ -20,7 +20,7 @@ create-deployment:
 	kubectl create -f kubernetes/social-network.yaml
 
 update-deployment:
-	kubectl set image deployment/social-network *=$(REGISTRY)/ssu-social-network:latest
+	./scripts/update_deployment.sh
 
 clean:
 	docker rm -f `docker ps -aq`
