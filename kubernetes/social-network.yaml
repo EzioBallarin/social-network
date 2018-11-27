@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: social-network
+spec:
+    selector:
+        matchLabels:
+            app: social-network
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                app: social-network
+        spec:
+            containers:
+            - image: gcr.io/ssu-social-network/ssu-social-network:latest
+              name: ssu-social-network
+              ports:
+              - containerPort: 80
