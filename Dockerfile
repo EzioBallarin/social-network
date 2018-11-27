@@ -8,9 +8,7 @@ WORKDIR /home/node/
 RUN apt-get update && \ 
     apt-get install -y build-essential python bcrypt
 
-COPY src/social-network/package*.json /home/node/
+COPY src/social-network/ /home/node/
 RUN npm install 
-
-copy src/social-network/server.js /home/node
 
 CMD ["npm", "start"]

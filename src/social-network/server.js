@@ -1,13 +1,7 @@
-'use strict';
-
-const express = require('express');
-
 const PORT = 80;
 
-const app = express();
-app.get('/', (req, res) => {
-	res.send('Hello world\n');
-});
-
+var app = require('./app.js');
+app.set('port', PORT);
 app.listen(PORT);
-console.log('Running on port 80');
+
+console.log("listening on port " + PORT + "\n");
