@@ -13,4 +13,5 @@ RUN npm install
 
 COPY src/social-network/ /home/node/
 
-CMD ["npm", "start"]
+# Start the node server, and log to the current directory
+CMD ["/bin/sh", "-c", "npm start > server.log 2>&1"]

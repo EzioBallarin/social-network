@@ -7,7 +7,9 @@ USE social;
 
 CREATE TABLE IF NOT EXISTS account ( 
     id INTEGER NOT NULL AUTO_INCREMENT,
-    username CHAR(30) NOT NULL,
+    username CHAR(128) NOT NULL,
+    fname CHAR(64) NOT NULL,
+    lname CHAR(128) NOT NULL, 
     password CHAR(60) NOT NULL,
     timestamp BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY(id),

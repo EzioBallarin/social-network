@@ -1,0 +1,22 @@
+<%- include('../includes/header.ejs'); %>
+<h2>Register for the SSU Social Network</h2>
+<form action="/register/new" method="post" id="ssusn_register">
+    <label>Email address</label>
+    <input type="email" name="ssusn_email" placeholder="Enter email"/>
+    <label>Full Name</label>
+    <input type="text" name="ssusn_fname" placeholder="First name"/>
+    <input type="text" name="ssusn_lname" placeholder="Last name"/>
+    <label>Password</label>
+    <div>
+        Your password must be at least 8 characters long, and contain three of the following
+        <ul>
+            <li>Lower case letters</li>
+            <li>Upper case letters</li>
+            <li>Numbers</li>
+            <li>Special characters</li>
+        </ul>
+   </div>
+   <input type="password" name="ssusn_password"/>
+   <button type="submit">Register</button>
+</form>
+<%- include('../includes/footer.ejs'); %>
