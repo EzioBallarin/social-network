@@ -5,6 +5,8 @@ var bodyParser = require('body-parser'); // parses POST data to the routes
 // Routes
 var index = require('./routes/index');
 var register = require('./routes/register');
+var login = require('./routes/login');
+var logout = require('./routes/logout');
 
 var app = express();
 
@@ -19,5 +21,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // Custom routes
 app.use('/', index);
 app.use('/register', register);
+app.use('/login', login);
+app.use('/logout', logout);
 
 module.exports = app;

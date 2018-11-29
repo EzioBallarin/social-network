@@ -1,4 +1,8 @@
 <%- include('../includes/header.ejs'); %>
+<% if (locals.wasErr) { %>
+    <div id='ssusn-regerror'>Could not register, please try again</div>
+    <script>setTimeout(function(){document.getElementById('ssusn-regerror').remove();},5000);</script>
+<% } %>
 <h2>Register for the SSU Social Network</h2>
 <form action="/register/new" method="post" id="ssusn_register">
     <label>Email address</label>

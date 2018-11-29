@@ -1,9 +1,5 @@
 var express = require('express');
+var bcrypt = require('bcrypt');
 var router = express.Router();
-
-
-router.get('/', function(req, res, next) {
-	res.render('index', req.query);
-});
 
 module.exports = router;

@@ -1,4 +1,15 @@
 <%- include("./includes/header.ejs"); %>
+<% if (locals.newAccount) { %>
+    <div id="new-account">Successfully created account</div>
+    <script>setTimeout(function(){document.getElementById('new-account').remove();},5000);</script>
+<% } %> 
 <h1>Social Network</h1>
-<a href="/register" >Register</a>
+<form action="./login" method="post" id="ssusn-login">
+    <label>Email</label>
+    <input type="email" name="ssusn-login-email"/>
+    <label>Password</label>
+    <input type="password" name="ssusn-login-password"/>
+    <button type="submit">Login</button>
+</form>
+<a href="./register" >Register</a>
 <%- include("./includes/footer.ejs"); %>
