@@ -2,19 +2,23 @@ SRCDIR=src/social-network
 PROJECT=ssu-social-network
 REGISTRY=gcr.io/$(PROJECT)
 
-.PHONY: ssu-social-network run-images push-images clean
+.PHONY: ssu-social-network mariadb run-images push-images clean
 .PHONY: create-deployment update-deployment
 
 ssu-social-network:
 	docker build -t ssu-social-network:latest -f Dockerfile . 
-	#docker rmi $(REGISTRY)/ssu-social-network:latest
 	docker tag ssu-social-network:latest $(REGISTRY)/ssu-social-network:latest
 
-run-images: ssu-social-network
-	docker run -d --name nodejs -p 80:80 ssu-social-network
+mariadb:
+	docker build -t mariadb:latest -f mariadb/Dockerfile .
+	docker tag mariadb:latest $(REGISTRY)/mariadb:latest
+
+run-images: ssu-social-network mariadb
+	./scripts/run-images.sh
 
 push-images:
 	gcloud docker -- push $(REGISTRY)/ssu-social-network:latest
+	gcloud docker -- push $(REGISTRY)/mariadb:latest
 
 create-deployment:
 	kubectl create -f kubernetes/social-network.yaml
