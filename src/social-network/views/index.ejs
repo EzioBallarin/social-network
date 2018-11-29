@@ -4,12 +4,12 @@
     <script>setTimeout(function(){document.getElementById('new-account').remove();},5000);</script>
 <% } %> 
 <h1>Social Network</h1>
-<form action="./login" method="post" id="ssusn-login">
+<form action="account/login" method="post" id="ssusn-login">
     <label>Email</label>
     <input type="email" name="ssusn-login-email"/>
     <label>Password</label>
     <input type="password" name="ssusn-login-password"/>
     <button type="submit">Login</button>
 </form>
-<a href="./register" >Register</a>
+<a href="account/register" >Register</a>
 <%- include("./includes/footer.ejs"); %>
