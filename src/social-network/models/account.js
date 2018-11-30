@@ -17,3 +17,11 @@ exports.registerNewUser = function(params, callback) {
         callback(err, result);
     });
 };
+
+exports.deleteUser = function(params, callback) {
+    var query = 'DELETE FROM account WHERE account=?';
+    var queryData = [[params.ssusn_email]];
+    conn.query(query, queryData, function(err, result) {
+        callback(err, result);
+    });
+};
