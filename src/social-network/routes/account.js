@@ -16,14 +16,17 @@ router.get('/register', function(req, res) {
 // ssusn_lname - Last name of the user
 // ssusn_password - Password for the new account
 router.post('/register', function(req, res) {
-   account.registerNewUser(req.body, function(err, result) {
-        if (err) {
-            console.log(err);
-            res.redirect('/account/register?wasErr=true');
-        } else {
-            res.redirect('/?newAccount=true');
-        }
+   bcrypt.hash(req.body.ssusn_password, 5, function (err, bcryptedPass) {
+       req.body.ssusn_password = bcryptedPass;
+       account.registerNewUser(req.body, function(err, result) {
+            if (err) {
+                console.log(err);
+                res.redirect('/account/register?wasErr=true');
+            } else {
+                res.redirect('/?newAccount=true');
+            }
 
+       });
    });
 });
 
