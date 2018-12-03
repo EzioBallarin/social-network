@@ -85,8 +85,14 @@ router.post('/logout', function(req, res) {
 });
 
 // Endpoint for ending token-based authentication session
-router.delete('/token', function(req, res) {
-
+router.delete('/token', validateToken, function(req, res) {
+    jwt.verify(req.token, process.env.JWT_SECRET, function(err, data) {
+        if (err) {
+            res.status(403).send(err);
+        } else {
+                
+        }
+    });
 });
 
 // Endpoint for deleting an account, used for testing only
@@ -99,5 +105,17 @@ router.delete('/', function(req, res) {
             res.sendStatus(200);
     });
 });
+
+function validateToken(req, res, next) {
+    const authHeader = req.headers["authroization"];
+    if (typeof bearer !== 'undefined') {
+        const bearer = authHeader(.split(" ");
+        const token = bearer[1];
+        req.token = token;
+        next();
+    } else {
+        res.status(403).send('Invalid token'); 
+    }
+}
 
 module.exports = router;
