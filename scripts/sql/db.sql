@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS content (
     user_id INTEGER NOT NULL,
 	post_id INTEGER NOT NULL AUTO_INCREMENT,
 	timestamp BIGINT UNSIGNED NOT NULL,
-	id INTEGER,
 	PRIMARY KEY(post_id),
 	FOREIGN KEY(user_id) REFERENCES account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -35,21 +34,18 @@ CREATE TABLE IF NOT EXISTS content (
 CREATE TABLE IF NOT EXISTS images (
     post_id INTEGER NOT NULL,
 	image BLOB NOT NULL,
-	post_id INTEGER,
 	FOREIGN KEY (post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS comments (
     post_id INTEGER NOT NULL,
 	comment CHAR(200) NOT NULL,
-	post_id INTEGER,
 	FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS tags (
     post_id INTEGER NOT NULL,
 	tag CHAR(200) NOT NULL,
-	post_id INTEGER,
 	FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

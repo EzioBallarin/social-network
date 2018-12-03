@@ -109,7 +109,7 @@ router.delete('/', function(req, res) {
 function validateToken(req, res, next) {
     const authHeader = req.headers["authroization"];
     if (typeof bearer !== 'undefined') {
-        const bearer = authHeader(.split(" ");
+        const bearer = authHeader.split(" ");
         const token = bearer[1];
         req.token = token;
         next();
