@@ -18,8 +18,19 @@ exports.registerNewUser = function(params, callback) {
     });
 };
 
+exports.getUser = function(params, callback) {
+    console.log("params to getUser:", params);
+    var query = 'SELECT password FROM account WHERE username = ?';
+    var queryData = [[
+        params.ssusn_email
+    ]];
+    conn.query(query, queryData, function(err, result) {
+        callback(err, result);
+    });
+};
+
 exports.deleteUser = function(params, callback) {
-    var query = 'DELETE FROM account WHERE account=?';
+    var query = 'DELETE FROM account WHERE username=?';
     var queryData = [[params.ssusn_email]];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
