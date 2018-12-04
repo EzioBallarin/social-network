@@ -19,8 +19,7 @@ exports.registerNewUser = function(params, callback) {
 };
 
 exports.getUser = function(params, callback) {
-    console.log("params to getUser:", params);
-    var query = 'SELECT password FROM account WHERE username = ?';
+    var query = 'SELECT password, id FROM account WHERE username = ?';
     var queryData = [[
         params.ssusn_email
     ]];

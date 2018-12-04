@@ -42,6 +42,36 @@ router.post('/register', function(req, res) {
 // Endpoint for cookie-based authentication
 router.post('/login', function(req, res) {
 
+    account.getUser(req.body, function(err, result) {
+        if (err || result.length != 1) {
+            console.log(err);
+            res.redirect('/?login=false');
+        } else {
+            // Compare the plantext password (first arg)
+            // with the stored hash retrieved for our database
+            bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
+                if (bcryptErr)
+                    console.log("Could not auth", req.body.ssusn_email, bcryptErr);
+                if (bcryptRes == true) {
+                    req.session.user = result[0].id;
+                    req.session.isLogged = true;
+                    // Set a cookie on the user end w/ the corresponding session ID
+                    // in our DB, and give it a max age of 1h (like our tokens)
+                    res.cookie('session', uuid(), { maxAge: 3600 * 1000}); 
+                    res.redirect('/?login=true');
+                } else {
+                    res.redirect(401, '/?login=false');
+                }
+            });
+        }
+    });
+
+});
+
+// Endpoint for ending cookie-based authentication session
+router.post('/logout', function(req, res) {
+    req.session.destroy();
+    res.redirect('/?logout=true');
 });
 
 // Endpoint for token-based authentication
@@ -49,14 +79,13 @@ router.post('/token', function(req, res) {
 
     // Fetch the user's password for comparison
     account.getUser(req.body, function(err, result) {
-        console.log("result of password fetch: ", result);
         if (err || result.length != 1) {
             console.log(err);
             res.sendStatus(500);
         } else { 
 
-            // Compare the plaintext POST'd ssusn_password
-            // with the already encrypted database entry
+            // Compare the plantext password (first arg)
+            // with the stored hash retrieved for our database
             bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
                 if (bcryptErr)
                     console.log("Could not auth ", req.body.ssusn_email, bcryptErr);
@@ -77,11 +106,6 @@ router.post('/token', function(req, res) {
             });
         }
     });
-});
-
-// Endpoint for ending cookie-based authentication session
-router.post('/logout', function(req, res) {
-
 });
 
 // Endpoint for ending token-based authentication session
