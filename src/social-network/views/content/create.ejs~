@@ -1,0 +1,17 @@
+<%- include('../includes/header.ejs'); %>
+<% if (locals.wasErr) { %>
+    <div id='ssusn-regerror'>Could not register, please try again</div>
+    <script>setTimeout(function(){document.getElementById('ssusn-regerror').remove();},5000);</script>
+<% } %>
+<h2>Register for the SSU Social Network</h2>
+<form action="/account/register" method="post" id="ssusn_register">
+    <label> Image </label>
+    <input type="image" name="image_org" placeholder="Image"/>
+    <label> Comments </label>
+    <input type="text" name="comment" placeholder="Write Comments Here"/>
+    <label> Tags </label>
+    <input type="text" name="tag" placeholder="Add Tags Here"/>
+    <div>
+    <button type="submit">Post</button>
+</form>
+<%- include('../includes/footer.ejs'); %>

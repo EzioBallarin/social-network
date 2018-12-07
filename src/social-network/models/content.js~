@@ -1,0 +1,77 @@
+var mysql = require('mysql');
+var db = require('./db_connection');
+var conn = mysql.createConnection(db.config);
+
+exports.createNewPost = function(params, callback) {
+    var now = Date.now() / 1000;
+    var query = 'INSERT INTO content(user_id, post_id, timestamp) VALUES(?)';
+    var queryData = [[
+	0,
+	1,
+	now
+    ]];
+    conn.query(query, queryData, function(err, result) {
+	var post_id = result.post_id;
+	var query = 'INSERT INTO images(post_id, image) VALUES(?)';
+	var queryData = [[
+	    post_id,
+	    params.image_org
+	    
+	]];
+	conn.query(query, queryData, function(err, result));
+	var query = 'INSERT INTO comments(post_id, comment) VALUES(?)';
+	var queryData = [[
+	    post_id,
+	    params.comment
+	]];
+	conn.query(query, queryData, function(err, result));
+	var query = 'INSERT INTO tags(post_id, tag) VALUES(?)';
+	var queryData = [[
+	    post_id,
+	    tag
+	]];
+	conn.query(query, queryData, function(err, result) {
+	    callback(err, function);
+	});
+    });
+};
+
+exports.getPost = function(params, callback) {
+    var query = 'SELECT cn.*, i.*, cm.*, t.* FROM content cn, images i, comments cm, tags t WHERE cn.post_id = ? AND i.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
+    var queryData = [
+	params.post_id,
+	params.post_id,
+	params.post_id,
+	params.post_id
+    ];
+    conn.query(query, queryData, function(err, result) {
+	console.log(result);
+	callback(err, function);
+    });
+};
+
+
+exports.changePost = function(params, callback) {
+    var query = 'UPDATE comments SET comment = ? WEHRE post_id = ?';
+    var queryData = [
+	params.comment;
+	params.post_id;
+    ];
+    conn.query(query, queryData, function(err, result) {
+	callback(err, function);
+    });
+};
+
+
+exports.deletePost = function(params, callback) {
+    var query 'DELETE * FROM content cn, images i, comments cm, tags t WHERE cn.post_id = ?, AND i.post_id = ?, AND post_id = ?, AND t.post_id = ?';
+    var queryData = [
+	params.post_id,
+	params.post_id,
+	params.post_id,
+	params.post_id
+    ];
+    conn.query(query, queryData, function(err, result) {
+	callback(err, function);
+    });
+};
