@@ -49,6 +49,17 @@ CREATE TABLE IF NOT EXISTS tags (
 	FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS subcriptions (
+	user_id INTEGER,
+	FOREIGN KEY(user_id) REFERENCES account(id),
+	subscription_id INTEGER NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS subscribers (
+	user_id INTEGER,
+	FOREIGN KEY(user_id) REFERENCES account(id),
+	subscriber_id INTEGER NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE USER IF NOT EXISTS 'social'@'%' IDENTIFIED by 'social';
 
