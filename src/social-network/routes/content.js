@@ -4,20 +4,23 @@ var bcrypt = require('bcrypt');
 var uuid = require('uuid/v1');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
+var sharp = require('sharp');
 var content = require('../models/content.js');
 
-router.get('/create', function(req, res) {
-	res.render('content/create', req.query);
+router.get('/', function(req, res) {
+	res.render('content/', req.query);
 });
 
 
-router.post('/create', function(req, res) {
+router.post('/', function(req, res) {
 	content.createNewPost(req.body, function(err, result) {
 		if(err){
 			console.log(err);
-			res.redirect('/content/create?wasErr=true');
+			res.redirect('/content/?wasErr=true');
 		} else {
 			res.redirect('/?newPost=true');
 		}
 	});
 });
+
+module.exports = router;

@@ -11,28 +11,32 @@ exports.createNewPost = function(params, callback) {
 	now
     ]];
     conn.query(query, queryData, function(err, result) {
-	var post_id = result.post_id;
-	var query = 'INSERT INTO images(post_id, image) VALUES(?)';
-	var queryData = [[
-	    post_id,
-	    params.image_org
-	    
-	]];
-	conn.query(query, queryData, function(err, result));
-	var query = 'INSERT INTO comments(post_id, comment) VALUES(?)';
-	var queryData = [[
-	    post_id,
-	    params.comment
-	]];
-	conn.query(query, queryData, function(err, result));
-	var query = 'INSERT INTO tags(post_id, tag) VALUES(?)';
-	var queryData = [[
-	    post_id,
-	    tag
-	]];
-	conn.query(query, queryData, function(err, result) {
-	    callback(err, function);
-	});
+        console.log("what content did i jus add", result);
+        var post_id = result.post_id;
+        var query = 'INSERT INTO images(post_id, image) VALUES(?)';
+        var queryData = [[
+            post_id,
+            params.image_org
+            
+        ]];
+        conn.query(query, queryData, function(err, result){
+             
+            var query = 'INSERT INTO comments(post_id, comment) VALUES(?)';
+            var queryData = [[
+                post_id,
+                params.comment
+            ]];
+            conn.query(query, queryData, function(err, result) {
+                var query = 'INSERT INTO tags(post_id, tag) VALUES(?)';
+                var queryData = [[
+                    post_id,
+                    tag
+                ]];
+                conn.query(query, queryData, function(err, result) {
+                    callback(err, result);
+                });
+            });
+        });
     });
 };
 
@@ -45,8 +49,8 @@ exports.getPost = function(params, callback) {
 	params.post_id
     ];
     conn.query(query, queryData, function(err, result) {
-	console.log(result);
-	callback(err, function);
+        console.log("get post: ",result);
+        callback(err, result);
     });
 };
 
@@ -54,17 +58,17 @@ exports.getPost = function(params, callback) {
 exports.changePost = function(params, callback) {
     var query = 'UPDATE comments SET comment = ? WHERE comments.post_id = ?';
     var queryData = [
-	params.comment;
-	params.post_id;
+	params.comment,
+	params.post_id
     ];
     conn.query(query, queryData, function(err, result) {
-	callback(err, function);
+        callback(err, result);
     });
 };
 
 
 exports.deletePost = function(params, callback) {
-    var query 'DELETE * FROM content cn, images i, comments cm, tags t WHERE cn.user_id = ?, AND cn.post_id = ? AND i.post_id = ?, AND post_id = ?, AND t.post_id = ?';
+    var query = 'DELETE * FROM content cn, images i, comments cm, tags t WHERE cn.user_id = ?, AND cn.post_id = ? AND i.post_id = ?, AND post_id = ?, AND t.post_id = ?';
     var queryData = [
 	params.user_id,
 	params.post_id,
@@ -73,6 +77,6 @@ exports.deletePost = function(params, callback) {
 	params.post_id
     ];
     conn.query(query, queryData, function(err, result) {
-	callback(err, function);
+        callback(err, result);
     });
 };

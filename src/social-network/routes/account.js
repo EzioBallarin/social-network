@@ -94,7 +94,7 @@ router.post('/token', function(req, res) {
                     
                     // Create a token that will expire in 1 hour
                     const token = jwt.sign(
-                        { username: req.body.ssusn_email }, 
+                        { username: result[0].id }, 
                         process.env.JWT_SECRET,
                         { expiresIn: '1h' }
                     );
@@ -109,16 +109,17 @@ router.post('/token', function(req, res) {
 });
 
 // Endpoint for ending token-based authentication session
-router.delete('/token', validateToken, function(req, res) {
+/*
+router.delete('/token', global.validateToken, function(req, res) {
     jwt.verify(req.token, process.env.JWT_SECRET, function(err, data) {
         if (err) {
             res.status(403).send(err);
         } else {
-                
+            res.status(200).send("Token deleted");        
         }
     });
 });
-
+*/
 // Endpoint for deleting an account, used for testing only
 router.delete('/', function(req, res) {
     account.deleteUser(req.body, function(err, result) {
@@ -130,16 +131,5 @@ router.delete('/', function(req, res) {
     });
 });
 
-function validateToken(req, res, next) {
-    const authHeader = req.headers["authroization"];
-    if (typeof bearer !== 'undefined') {
-        const bearer = authHeader.split(" ");
-        const token = bearer[1];
-        req.token = token;
-        next();
-    } else {
-        res.status(403).send('Invalid token'); 
-    }
-}
 
 module.exports = router;

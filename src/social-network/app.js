@@ -8,7 +8,7 @@ var session = require('express-session'); // session data for login/logout
 // Routes
 var index = require('./routes/index');
 var account = require('./routes/account');
-var content = requires('./routes/content');
+var content = require('./routes/content');
 
 var app = express();
 
@@ -46,5 +46,17 @@ app.use( (req, res, next) => {
 app.use('/', index);
 app.use('/account/', account);
 app.use('/content/', content);
+
+global.validateToken = function(req, res, next) {
+    const authHeader = req.headers["authroization"];
+    if (typeof bearer !== 'undefined') {
+        const bearer = authHeader.split(" ");
+        const token = bearer[1];
+        req.token = token;
+        next();
+    } else {
+        res.status(403).send('Invalid token'); 
+    }
+};
 
 module.exports = app;

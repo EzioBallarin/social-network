@@ -9,6 +9,10 @@
 <form action="account/logout" method="post" id="ssusn-logout">
     <button type="submit">Logout</button>
 </form>
+<form action="content" method="post" id="ssusn-new-content">
+    <input type="file" name="image"/><br/>
+    <input type="submit"/>
+</form>
 <% } else { %>
 <form action="account/login" method="post" id="ssusn-login">
     <label>Email</label>
