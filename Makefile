@@ -8,19 +8,21 @@ REGISTRY=gcr.io/$(PROJECT)
 .PHONY: test-registration
 
 ssu-social-network:
+	docker rmi -f ssu-social-network 
 	docker build -t ssu-social-network:latest -f Dockerfile . 
 	docker tag ssu-social-network:latest $(REGISTRY)/ssu-social-network:latest
 
 mariadb:
-	docker build -t mariadb:latest -f mariadb/Dockerfile .
-	docker tag mariadb:latest $(REGISTRY)/mariadb:latest
+	docker rmi -f ssu-mariadb
+	docker build -t ssu-mariadb:latest -f mariadb/Dockerfile .
+	docker tag ssu-mariadb:latest $(REGISTRY)/ssu-mariadb:latest
 
 run-images: ssu-social-network mariadb
 	./scripts/run-images.sh
 
 push-images:
 	gcloud docker -- push $(REGISTRY)/ssu-social-network:latest
-	gcloud docker -- push $(REGISTRY)/mariadb:latest
+	gcloud docker -- push $(REGISTRY)/ssu-mariadb:latest
 
 create-deployment:
 	kubectl create -f kubernetes/social-network.yaml
@@ -42,4 +44,4 @@ test-registration:
 test: test-registration
 
 clean:
-	docker rm -f `docker ps -aq`
+	docker rm -fv `docker ps -aq`

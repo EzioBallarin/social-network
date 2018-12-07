@@ -1,16 +1,22 @@
 {
-	"name": "ssu-social-network",
-	"version": "1.0.0",
-	"description": "Instagram replica using containers",
-	"authors": "Ezio Ballarin <ezio.t.ballarin@gmail.com>, Justin Moore <jtnmoore@gmail.com>, Robert Hubbell <bhubbells22@gmail.com>",
-	"main": "server.js",
-	"scripts": {
-		"start": "node server.js"
-	}, 
-	"dependencies": {
-		"express": ">=4.16.4",
-		"mysql": ">=2.16.0",
-		"ejs": ">=2.6.1",
-		"bcrypt": "3.0.2"
-	}
+    "name": "ssu-social-network",
+    "version": "1.0.0",
+    "description": "Instagram replica using containers",
+    "authors": "Ezio Ballarin <ezio.t.ballarin@gmail.com>, Justin Moore <jtnmoore@gmail.com>, Robert Hubbell <bhubbells22@gmail.com>",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    }, 
+    "dependencies": {
+        "express": ">=4.16.4",
+        "mysql": ">=2.16.0",
+        "ejs": ">=2.6.1",
+        "bcrypt": "3.0.2",
+        "jsonwebtoken": ">=8.4.0",
+        "uuid": ">=3.3.2",
+        "dotenv": ">=6.1.0",
+        "body-parser": ">=1.18.3",
+        "cookie-parser": ">=1.4.3",
+        "express-session": ">=1.15.6"
+    }
 }
