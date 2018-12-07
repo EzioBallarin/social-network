@@ -14,17 +14,19 @@ exports.subscribe = function(params, callback) {
     });
 };
 
-exports.viewSubscriptions = function(params, callback) {
-    var query = 'SELECT * FROM subscriptions WHERE user_id=?';
-    var queryData = [[params.user_id]];
+exports.viewSubscriptions = function(user_id, callback) {
+    var query = 'SELECT a.username FROM account a LEFT JOIN subscriptions s on ' +
+	' s.subscription_id = a.id WHERE s.user_id=?';
+    var queryData = [[user_id]];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
     });
 };
 
-exports.viewSubscribers = function(params, callback) {
-    var query = 'SELECT * FROM subscribers WHERE user_id=?';
-    var queryData = [[params.user_id]];
+exports.viewSubscribers = function(user_id, callback) {
+    var query = 'SELECT a.username FROM account a LEFT JOIN subscribers s on ' +
+	' s.subscriber_id = a.id WHERE s.user_id=?';
+    var queryData = [[user_id]];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
     });
