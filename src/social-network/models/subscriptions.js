@@ -4,7 +4,7 @@ var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
 
 exports.subscribe = function(params, callback) {
-    var query = 'INSERT INTO subscriptions(user_id, subscription_id) VALUES(?)';
+    var query = 'INSERT INTO subscriptions(user_id, subscription_id) VALUES(?);';
     var queryData = [[
 	params.user_id,
 	params.subscription_id
@@ -15,17 +15,19 @@ exports.subscribe = function(params, callback) {
 };
 
 exports.viewSubscriptions = function(user_id, callback) {
-    var query = 'SELECT a.username FROM account a LEFT JOIN subscriptions s on ' +
-	' s.subscription_id = a.id WHERE s.user_id=?';
-    var queryData = [[user_id]];
-    conn.query(query, queryData, function(err, result) {
+    var query = 'SELECT a.username FROM account a LEFT JOIN subscriptions_user s on ' +
+	' s.subscription_id = a.id WHERE s.user_id=(?);';
+    console.log(query, user_id);
+    // var queryData = [[user_id]];
+    conn.query(query, user_id, function(err, result) {
+	console.log(query, err, result);
         callback(err, result);
     });
 };
 
 exports.viewSubscribers = function(user_id, callback) {
     var query = 'SELECT a.username FROM account a LEFT JOIN subscribers s on ' +
-	' s.subscriber_id = a.id WHERE s.user_id=?';
+	' s.subscriber_id = a.id WHERE s.user_id=?;';
     var queryData = [[user_id]];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
