@@ -9,6 +9,8 @@ var session = require('express-session'); // session data for login/logout
 var index = require('./routes/index');
 var account = require('./routes/account');
 var content = require('./routes/content');
+=======
+var subscriptions = require('./routes/subscriptions');
 
 var app = express();
 
@@ -58,5 +60,7 @@ global.validateToken = function(req, res, next) {
         res.status(403).send('Invalid token'); 
     }
 };
+=======
+app.use('/subscriptions/', subscriptions);
 
 module.exports = app;

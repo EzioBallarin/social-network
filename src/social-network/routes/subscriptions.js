@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 var subscriptions = require('../models/subscriptions.js');
 
-router.get('/subscriptions', function(req, res) {
-    subscriptions.viewSubscriptions(function(err, result) {
+router.get('/', function(req, res) {
+    subscriptions.viewSubscriptions(0, function(err, result) {
 	if(err) {
 	    res.send(err);
 	}
 	else {
-	    res.render('subscriptions/viewSubscriptions', { 'result':result });
+	    //var user_id = jwt.verify(token, process.env.JWT_SECRET);
+	    res.render('subscriptions/viewSubscriptions', { 'user_id':result });
 	}
     });
 });
@@ -19,8 +20,11 @@ router.get('/subscribers', function(req, res) {
 	    res.send(err);
 	}
 	else {
-	    res.render('subscriptions/viewSubscribers', { 'result':result });
+	    validateToken(req, res, next);
+	    var user_id = jwt.verify(token, process.env.JWT_SECRET);
+	    res.render('subscriptions/viewSubscribers', { 'user_id':result });
 	}
     });
 });
 
+module.exports = router;
