@@ -33,16 +33,11 @@ CREATE TABLE IF NOT EXISTS content (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS images (
-<<<<<<< HEAD
     post_id INTEGER NOT NULL,
 	image_org BLOB NOT NULL,
 	image_def BLOB NOT NULL,
 	image_med BLOB NOT NULL,
 	image_thm BLOB NOT NULL,
-=======
-        post_id INTEGER NOT NULL,
-	image BLOB NOT NULL,
->>>>>>> 52ee237b11a6ff912a164b6b34957a3ba36c6a59
 	FOREIGN KEY (post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB
 	DEFAULT CHARSET=utf8mb4;

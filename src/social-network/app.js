@@ -48,6 +48,7 @@ app.use( (req, res, next) => {
 app.use('/', index);
 app.use('/account/', account);
 app.use('/content/', content);
+app.use('/subscriptions/', subscriptions);
 
 global.validateToken = function(req, res, next) {
     const authHeader = req.headers["authroization"];
@@ -60,7 +61,5 @@ global.validateToken = function(req, res, next) {
         res.status(403).send('Invalid token'); 
     }
 };
-=======
-app.use('/subscriptions/', subscriptions);
 
 module.exports = app;
