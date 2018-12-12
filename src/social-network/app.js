@@ -47,16 +47,48 @@ app.use('/', index);
 app.use('/account/', account);
 app.use('/content/', content);
 
+global.isTokenPresent = function(req) {
+    const authHeader = req.headers["authorization"];
+    if (typeof authHeader === 'undefined')
+        return false;
+    const bearer = authHeader.split(" ");
+    if (typeof bearer === 'undefined')
+        return false;
+    else 
+        return true;
+}
+
 global.validateToken = function(req, res, next) {
-    const authHeader = req.headers["authroization"];
-    if (typeof bearer !== 'undefined') {
-        const bearer = authHeader.split(" ");
-        const token = bearer[1];
+    if (isTokenPresent(req)) {
+        const token = req.headers["authorization"].split(" ")[1];
         req.token = token;
-        next();
+        next(req, res);
     } else {
         res.status(403).send('Invalid token'); 
     }
+};
+
+global.validateSession = function(req, res, next) {
+    var account = require('./models/account.js');
+    account.getSession(req.session, function(err, result) {
+        if (err) {
+            console.log("couldn't validate user:", err);
+            res.redirect(403, '/?loginValidation=false');
+        } else {
+            expiration = result[0].expiration;
+            var now = Date.now() / 1000;
+            if (now > expiration) {
+                account.deleteSession(req.session, function(err, result) {
+                    if (err) {
+                        console.log("could not delete session", req.session, err);
+                    }
+                    res.redirect(403, '/?loginValidation=false');
+                });
+            } else {
+                next(req, res);
+            }
+        }
+    });
 };
 
 module.exports = app;

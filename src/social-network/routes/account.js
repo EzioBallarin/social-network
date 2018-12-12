@@ -83,8 +83,15 @@ router.post('/login', function(req, res) {
 
 // Endpoint for ending cookie-based authentication session
 router.post('/logout', function(req, res) {
-    req.session.destroy();
-    res.redirect('/?logout=true');
+    account.deleteSession(req.session, function(err, result) {
+        if (err) {
+            console.log("could not delete session");
+            res.redirect(500, '/?logout=false');
+        } else {
+            req.session.destroy();
+            res.redirect('/?logout=true');
+        }
+    });
 });
 
 // Endpoint for token-based authentication

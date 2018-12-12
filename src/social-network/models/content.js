@@ -23,24 +23,23 @@ function storeImage(params) {
     });
 }
 
-function getUIDFromSession(email, callback) {
-    callback();
-}
-
 exports.createNewPost = function(params, callback) {
-    console.log(params);
+    console.log("new post params:", params);
+    console.log("session", params.sess);
     var now = Date.now() / 1000;
     var query = 'INSERT INTO content(user_id, timestamp) VALUES(?)';
     var queryData = [[
-        1,
+        params.sess.user,
         now 
     ]];
-    
+    conn.query(query, queryData, function(err, result) {
+        
+    });
     callback(null, null);
 };
 
 exports.getPost = function(params, callback) {
-    var query = 'SELECT cn.*, i.*, cm.*, t.* FROM content cn, images i, comments cm, tags t WHERE cn.post_id = ? AND i.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
+    var query = 'SELECT cn.*, cm.*, t.* FROM content cn, comments cm, tags t WHERE cn.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
     var queryData = [
 	params.post_id,
 	params.post_id,
@@ -67,7 +66,7 @@ exports.changePost = function(params, callback) {
 
 
 exports.deletePost = function(params, callback) {
-    var query = 'DELETE * FROM content cn, images i, comments cm, tags t WHERE cn.user_id = ?, AND cn.post_id = ? AND i.post_id = ?, AND post_id = ?, AND t.post_id = ?';
+    var query = 'DELETE * FROM content cn, comments cm, tags t WHERE cn.user_id = ? AND cn.post_id = ? AND post_id = ? AND t.post_id = ?';
     var queryData = [
 	params.user_id,
 	params.post_id,
