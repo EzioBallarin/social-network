@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
 	content.createNewPost(req.body, function(err, result) {
-		if(err){
+		if (err) {
 			console.log("Could not create post:", err);
 			res.redirect('/content/?wasErr=true');
 		} else {

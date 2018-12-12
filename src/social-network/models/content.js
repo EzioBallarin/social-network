@@ -1,30 +1,26 @@
 var mysql = require('mysql');
 var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
-var storage_conf = {
-    projectId: 'ssu-social-network',
-    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
-};
 
-function storeImage(params, callback) {
-    console.log("storeImage params: ", params);
-    const {Storage} = require('@google-cloud/storage');
-    const storage = new Storage(storage_conf);
-    const bucketName = 'ssu-social-network';
-    //await storage.bucket(bucketName).upload(
+function storeImage(params) {
+    return new Promise(function(fulfill, reject) {
+        console.log("storeImage params: ", params);
+        const {Storage} = require('@google-cloud/storage');
+        const storage = new Storage();
+        const bucketName = 'ssu-social-network';
 
-    const buckets = storage.getBuckets();
-    buckets.then((results) => {
-        const buckets = results[0];
-
-        console.log('Buckets:');
-        buckets.forEach((bucket) => {
-            console.log(bucket.name);
+        storage.getBuckets().then((results) => {
+            const buckets = results[0];
+            
+            console.log("buckets:");
+            buckets.forEach((bucket) => {
+                console.log(bucket.name);
+            });
+        }).catch((err) => {
+            console.log('error with buckets', err);
         });
-    }).catch((err) => {
-        console.error('Error:', err);
+        fulfill();
     });
-    callback(null, null);
 }
 
 exports.createNewPost = function(params, callback) {
@@ -67,8 +63,8 @@ exports.createNewPost = function(params, callback) {
         });
     });
     */
-    storeImage(params, function(err, result) {
-        callback(err, result);
+    storeImage(params).then(function() {
+        callback(null, null);
     });
 };
 
