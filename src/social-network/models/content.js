@@ -1,6 +1,31 @@
 var mysql = require('mysql');
 var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
+var storage_conf = {
+    projectId: 'ssu-social-network',
+    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+};
+
+function storeImage(params, callback) {
+    console.log("storeImage params: ", params);
+    const {Storage} = require('@google-cloud/storage');
+    const storage = new Storage(storage_conf);
+    const bucketName = 'ssu-social-network';
+    //await storage.bucket(bucketName).upload(
+
+    const buckets = storage.getBuckets();
+    buckets.then((results) => {
+        const buckets = results[0];
+
+        console.log('Buckets:');
+        buckets.forEach((bucket) => {
+            console.log(bucket.name);
+        });
+    }).catch((err) => {
+        console.error('Error:', err);
+    });
+    callback(null, null);
+}
 
 exports.createNewPost = function(params, callback) {
     var now = Date.now() / 1000;
@@ -10,33 +35,40 @@ exports.createNewPost = function(params, callback) {
 	1,
 	now
     ]];
-    conn.query(query, queryData, function(err, result) {
-        console.log("what content did i jus add", result);
-        var post_id = result.post_id;
-        var query = 'INSERT INTO images(post_id, image) VALUES(?)';
-        var queryData = [[
-            post_id,
-            params.image_org
-            
-        ]];
-        conn.query(query, queryData, function(err, result){
-             
-            var query = 'INSERT INTO comments(post_id, comment) VALUES(?)';
+    /*
+    storeImage(params, function(err, result) {
+        conn.query(query, queryData, function(err, result) {
+            console.log("what content did i jus add", result);
+            var post_id = result.post_id;
+            var query = 'INSERT INTO images(post_id, image) VALUES(?)';
             var queryData = [[
                 post_id,
-                params.comment
+                params.image_org
+                
             ]];
-            conn.query(query, queryData, function(err, result) {
-                var query = 'INSERT INTO tags(post_id, tag) VALUES(?)';
+            conn.query(query, queryData, function(err, result){
+                 
+                var query = 'INSERT INTO comments(post_id, comment) VALUES(?)';
                 var queryData = [[
                     post_id,
-                    tag
+                    params.comment
                 ]];
                 conn.query(query, queryData, function(err, result) {
-                    callback(err, result);
+                    var query = 'INSERT INTO tags(post_id, tag) VALUES(?)';
+                    var queryData = [[
+                        post_id,
+                        tag
+                    ]];
+                    conn.query(query, queryData, function(err, result) {
+                        callback(err, result);
+                    });
                 });
             });
         });
+    });
+    */
+    storeImage(params, function(err, result) {
+        callback(err, result);
     });
 };
 
