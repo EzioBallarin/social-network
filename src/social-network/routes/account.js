@@ -29,7 +29,7 @@ router.post('/register', function(req, res) {
        req.body.ssusn_password = bcryptedPass;
        account.registerNewUser(req.body, function(err, result) {
             if (err) {
-                console.log(err);
+                console.log("Could not register account:", err);
                 res.redirect('/account/register?wasErr=true');
             } else {
                 res.redirect('/?newAccount=true');
@@ -44,14 +44,14 @@ router.post('/login', function(req, res) {
 
     account.getUser(req.body, function(err, result) {
         if (err || result.length != 1) {
-            console.log(err);
+            console.log("Could not login:", err);
             res.redirect('/?login=false');
         } else {
             // Compare the plantext password (first arg)
             // with the stored hash retrieved for our database
             bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
                 if (bcryptErr)
-                    console.log("Could not auth", req.body.ssusn_email, bcryptErr);
+                    console.log("Could not auth for login", req.body.ssusn_email, bcryptErr);
                 if (bcryptRes == true) {
                     req.session.user = result[0].id;
                     req.session.isLogged = true;
@@ -80,7 +80,7 @@ router.post('/token', function(req, res) {
     // Fetch the user's password for comparison
     account.getUser(req.body, function(err, result) {
         if (err || result.length != 1) {
-            console.log(err);
+            console.log("Could not generate auth token:", err);
             res.sendStatus(500);
         } else { 
 
@@ -88,7 +88,7 @@ router.post('/token', function(req, res) {
             // with the stored hash retrieved for our database
             bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
                 if (bcryptErr)
-                    console.log("Could not auth ", req.body.ssusn_email, bcryptErr);
+                    console.log("Could not auth for token:", req.body.ssusn_email, bcryptErr);
 
                 if (bcryptRes == true) {
                     
@@ -124,7 +124,7 @@ router.delete('/token', global.validateToken, function(req, res) {
 router.delete('/', function(req, res) {
     account.deleteUser(req.body, function(err, result) {
         if (err) { 
-            console.log(err);
+            console.log("Could not delete user:", err);
             res.sendStatus(500);
         } else
             res.sendStatus(200);

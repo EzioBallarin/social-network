@@ -2,7 +2,7 @@
 <% if (locals.newAccount) { %>
     <div id="new-account">Successfully created account</div>
     <script>setTimeout(function(){document.getElementById('new-account').remove();},5000);</script>
-<% } console.log(locals);%> 
+<% } %> 
 <h1>Social Network</h1>
 <% if (locals.session.isLogged) { %>
 <div> hello logged in user </div>
