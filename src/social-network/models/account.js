@@ -35,3 +35,17 @@ exports.deleteUser = function(params, callback) {
         callback(err, result);
     });
 };
+
+exports.createNewSession = function(params, callback) {
+    // Expire a session an hour after login
+    var expiration = (Date.now() / 1000) + 3600;
+    var query = "INSERT INTO sessions(session, user_id, expiration) VALUES (?)";
+    var queryData = [[
+        params.uuid,
+        params.user_id,
+        expiration
+    ]];
+    conn.query(query, queryData, function(err, result) {
+        callback(err, result);
+    });
+};

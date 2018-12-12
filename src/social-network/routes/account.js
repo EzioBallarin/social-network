@@ -50,15 +50,28 @@ router.post('/login', function(req, res) {
             // Compare the plantext password (first arg)
             // with the stored hash retrieved for our database
             bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
-                if (bcryptErr)
+                if (bcryptErr) {
                     console.log("Could not auth for login", req.body.ssusn_email, bcryptErr);
-                if (bcryptRes == true) {
+                    res.redirect(401, '/?login=false');
+                } else if (bcryptRes == true) {
                     req.session.user = result[0].id;
                     req.session.isLogged = true;
                     // Set a cookie on the user end w/ the corresponding session ID
                     // in our DB, and give it a max age of 1h (like our tokens)
-                    res.cookie('session', uuid(), { maxAge: 3600 * 1000}); 
-                    res.redirect('/?login=true');
+                    var params = {
+                        uuid: uuid(),
+                        user_id: result[0].id
+                    };
+                    account.createNewSession(params, function(err, result) {
+                        if (err) {
+                            console.log("Couldn't create session", err);
+                            res.redirect(401, '/?login=false');
+                        } else {
+                            req.session.uuid = params.uuid;
+                            res.cookie('session', params.uuid, { maxAge: 3600 * 1000}); 
+                            res.redirect('/?login=true');
+                        }
+                    });
                 } else {
                     res.redirect(401, '/?login=false');
                 }

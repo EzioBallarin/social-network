@@ -23,49 +23,20 @@ function storeImage(params) {
     });
 }
 
+function getUIDFromSession(email, callback) {
+    callback();
+}
+
 exports.createNewPost = function(params, callback) {
+    console.log(params);
     var now = Date.now() / 1000;
-    var query = 'INSERT INTO content(user_id, post_id, timestamp) VALUES(?)';
+    var query = 'INSERT INTO content(user_id, timestamp) VALUES(?)';
     var queryData = [[
-	0,
-	1,
-	now
+        1,
+        now 
     ]];
-    /*
-    storeImage(params, function(err, result) {
-        conn.query(query, queryData, function(err, result) {
-            console.log("what content did i jus add", result);
-            var post_id = result.post_id;
-            var query = 'INSERT INTO images(post_id, image) VALUES(?)';
-            var queryData = [[
-                post_id,
-                params.image_org
-                
-            ]];
-            conn.query(query, queryData, function(err, result){
-                 
-                var query = 'INSERT INTO comments(post_id, comment) VALUES(?)';
-                var queryData = [[
-                    post_id,
-                    params.comment
-                ]];
-                conn.query(query, queryData, function(err, result) {
-                    var query = 'INSERT INTO tags(post_id, tag) VALUES(?)';
-                    var queryData = [[
-                        post_id,
-                        tag
-                    ]];
-                    conn.query(query, queryData, function(err, result) {
-                        callback(err, result);
-                    });
-                });
-            });
-        });
-    });
-    */
-    storeImage(params).then(function() {
-        callback(null, null);
-    });
+    
+    callback(null, null);
 };
 
 exports.getPost = function(params, callback) {

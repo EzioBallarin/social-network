@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS account (
 
 CREATE TABLE IF NOT EXISTS sessions (
     session CHAR(36) NOT NULL,
-    username CHAR(30) not null,
+    user_id INTEGER NOT NULL, 
     expiration BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY(session)
+    PRIMARY KEY(session),
+    FOREIGN KEY(user_id) REFERENCES account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS content (

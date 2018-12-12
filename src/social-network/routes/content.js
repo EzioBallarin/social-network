@@ -13,7 +13,11 @@ router.get('/', function(req, res) {
 
 
 router.post('/', function(req, res) {
-	content.createNewPost(req.body, function(err, result) {
+    var params = {
+        body: req.body,
+        sess: req.session
+    };
+	content.createNewPost(params, function(err, result) {
 		if (err) {
 			console.log("Could not create post:", err);
 			res.redirect('/content/?wasErr=true');
