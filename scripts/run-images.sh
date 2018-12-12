@@ -12,6 +12,6 @@ docker network ls -f "driver=bridge" | grep ' social ' > /dev/null || docker net
 
 docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=hobbes -v `pwd`/scripts/sql:/docker-entrypoint-initdb.d:ro --network social gcr.io/ssu-social-network/ssu-mariadb:latest
 
-sleep 10
+sleep 5
 
 docker run -d --name social-network -e JWT_SECRET_KEY=minibank -p 80:80 --network social gcr.io/ssu-social-network/ssu-social-network:latest
