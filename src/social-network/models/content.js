@@ -20,45 +20,85 @@ async function storeImage(params) {
             storage.bucket(bucketName).file(user + '/' + post + '_medium' + extension),
             storage.bucket(bucketName).file(user + '/' + post + '_default' + extension)
         ];
-        const dimensions = [
-            {},
-            { width: 161, height: 161 },
-            { width: 612, height: 612 },
-            { width: 1080, height: 1080}
-        ]
+        // fit: contain ensures the images is exactly widthxheight, and will
+        // pad extra pixels with black (i.e. wide pictures get a black bar
+        // on the top and bottom
+        // fit: inside gives the image the flexibility to maintain
+        // their original aspect ratios
+        const dimensions = {
+            thumb: { width: 161, height: 161, fit: 'contain'},
+            med: { width: 612, height: 612, fit: 'contain' },
+            def: { width: 1080, height: 1080, fit: 'contain' }
+        }
         const metadata = {
             contentType: params.image.mimetype
         };
         
-        for (const type of files) {
-            var imageCopy = new Buffer.alloc(params.image.buffer.length);
-            params.image.buffer.copy(imageCopy);
-            console.log(type, dimensions[type]); 
-            console.log("original image:", params.image.buffer);
-            console.log("base buffer: ", imageCopy);
-            // Resize the image to be the proper rendition, 
-            // then upload it to gcloud storage
-            sharp(imageCopy)
-            .resize(dimensions[type])
-            .toBuffer()
-            .then( data => { // data is the converted buffer
-                var typeStream = new stream.PassThrough();
-                typeStream.end(data);
-                typeStream.pipe(files[type].createWriteStream({resumable: false, metadata:metadata})
-                .on('error', err => {
-                    console.log("Couldn't upload " + params.image.originalname + " " + type);
-                    reject(err);
-                })
-                .on('finish', () => {
-                    types[type].makePublic();
-                }));
-            }).catch( err => {
-                console.log("couldn't convert " + params.image.originalname + " " + type);
+        const original = sharp(params.image.buffer);
+        const thumbRendition   = original.clone().resize(dimensions.thumb);
+        const mediumRendition  = original.clone().resize(dimensions.med);
+        const defaultRendition = original.clone().resize(dimensions.def);
+
+        original.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[0].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload original of " + params.image.originalname);
                 reject(err);
+            })
+            .on('finish', () => {
+                files[0].makePublic().then( () => {
+                    console.log("uploaded original of " + params.image.originalname);
+                });
             });
-            console.log("did i happen after", type);
-        }
-    });
+        }).catch( err => { reject(err); });
+        thumbRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[1].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload thumbnail of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[1].makePublic().then( () => {
+                    console.log("uploaded thumbnail of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        mediumRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[2].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload medium of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[2].makePublic().then( () => {
+                    console.log("uploaded medium of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        defaultRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[3].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload default of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[3].makePublic().then( () => {
+                    console.log("uploaded default of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+
+        fulfill();
+
+    }); // End of original promise
 }
 
 exports.createNewPost = function(params, callback) {
