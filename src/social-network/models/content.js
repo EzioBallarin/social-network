@@ -1,37 +1,104 @@
 var mysql = require('mysql');
 var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
+var path = require('path');
 var stream = require('stream');
+var sharp = require('sharp');
 
-function storeImage(params) {
+async function storeImage(params) {
     return new Promise(function(fulfill, reject) {
-        console.log("storeImage params: ", params);
         const {Storage} = require('@google-cloud/storage');
         const storage = new Storage();
         const bucketName = 'ssu-social-network';
         const post = params.post;
-        const fileName = params.image.originalname;
-        const file = storage.bucket(bucketName).file(fileName);
+        const user = params.user;
+        const extension = path.extname(params.image.originalname);
+        
+        const files = [
+            storage.bucket(bucketName).file(user + '/' + post + '_original' + extension),
+            storage.bucket(bucketName).file(user + '/' + post + '_thumb' + extension),
+            storage.bucket(bucketName).file(user + '/' + post + '_medium' + extension),
+            storage.bucket(bucketName).file(user + '/' + post + '_default' + extension)
+        ];
+        // fit: contain ensures the images is exactly widthxheight, and will
+        // pad extra pixels with black (i.e. wide pictures get a black bar
+        // on the top and bottom
+        // fit: inside gives the image the flexibility to maintain
+        // their original aspect ratios
+        const dimensions = {
+            thumb: { width: 161, height: 161, fit: 'contain'},
+            med: { width: 612, height: 612, fit: 'contain' },
+            def: { width: 1080, height: 1080, fit: 'contain' }
+        }
         const metadata = {
             contentType: params.image.mimetype
         };
         
-        var fileStream = new stream.PassThrough();
+        const original = sharp(params.image.buffer);
+        const thumbRendition   = original.clone().resize(dimensions.thumb);
+        const mediumRendition  = original.clone().resize(dimensions.med);
+        const defaultRendition = original.clone().resize(dimensions.def);
 
-        fileStream.end(params.image.buffer);
+        original.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[0].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload original of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[0].makePublic().then( () => {
+                    console.log("uploaded original of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        thumbRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[1].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload thumbnail of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[1].makePublic().then( () => {
+                    console.log("uploaded thumbnail of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        mediumRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[2].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload medium of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[2].makePublic().then( () => {
+                    console.log("uploaded medium of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        defaultRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[3].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload default of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[3].makePublic().then( () => {
+                    console.log("uploaded default of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
 
-        fileStream.pipe(file.createWriteStream({metadata: metadata}))
-        .on('error', err => {
-          console.log("Couldn't upload " + fileName + ": ", err);
-          reject(err);
-        })
-        .on('finish', () => {
-          file.makePublic().then(() => {
-              fulfill();                
-          });
-        });
+        fulfill();
 
-    });
+    }); // End of original promise
 }
 
 exports.createNewPost = function(params, callback) {
@@ -63,9 +130,8 @@ exports.createNewPost = function(params, callback) {
                     callback(err, result);
                 } else {
                     console.log("insert succeeded for comments of", postId, "inserted:", result);
-                    var tagsQuery = "INSERT INTO tags(post_id, tag) VALUES (?)";
+                    var tagsQuery = "INSERT INTO tags(tag) VALUES (?)";
                     var tagsData = [[
-                        postId,
                         params.body.image_tags
                     ]];
                     conn.query(tagsQuery, tagsData, function(err, result) {
@@ -76,6 +142,7 @@ exports.createNewPost = function(params, callback) {
                             console.log("insert succeded for tags of ", postId, "inserted:", result);
                             console.log("pushing image", postId);
                             var storageParams = {
+                                user: params.sess.user,
                                 post: postId,
                                 image: params.file
                             };

@@ -93,4 +93,11 @@ global.validateSession = function(req, res, next) {
     });
 };
 
+// End of the line error handler for URL not found
+app.use(function(err, req, res, next) {
+    console.log("404: ", err);
+    res.status(404);
+    res.send("Not found");
+});
+
 module.exports = app;
