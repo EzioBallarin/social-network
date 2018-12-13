@@ -7,8 +7,9 @@ var jwt = require('jsonwebtoken');
 var sharp = require('sharp');
 var content = require('../models/content.js');
 
+
 router.get('/', function(req, res) {
-	res.render('content/', req.query);
+	res.render('content/content');
 });
 
 
@@ -18,7 +19,31 @@ router.post('/', function(req, res) {
 			console.log(err);
 			res.redirect('/content/?wasErr=true');
 		} else {
-			res.redirect('/?newPost=true');
+			res.render('content/createPost', {'post_id':result} );
+		}
+	});
+});
+
+
+router.put('/:post_id', function(req, res) {
+	content.changePost(req.body, function(err, result) {
+		if(err){
+			console.log(err);
+			res.redirect('content/?wasErr=true');
+		} else {
+			res.redirect('/?changePost=true');
+		}
+	});
+});
+
+
+router.delete('/:post_id', function(req, res) {
+	content.deletePost(req.body, function(err, result) {
+		if(err){
+			console.log(err);
+			res.redirect('content/?wasErr=true');
+		} else {
+			res.redirect('/?deletePost=true');
 		}
 	});
 });

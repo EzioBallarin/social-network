@@ -9,7 +9,6 @@ var session = require('express-session'); // session data for login/logout
 var index = require('./routes/index');
 var account = require('./routes/account');
 var content = require('./routes/content');
-=======
 var subscriptions = require('./routes/subscriptions');
 
 var app = express();
@@ -47,6 +46,7 @@ app.use( (req, res, next) => {
 // Custom routes
 app.use('/', index);
 app.use('/account/', account);
+app.use('/subscriptions/', subscriptions);
 app.use('/content/', content);
 app.use('/subscriptions/', subscriptions);
 
