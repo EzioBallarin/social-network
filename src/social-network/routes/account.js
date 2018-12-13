@@ -25,8 +25,8 @@ router.post('/register', function(req, res) {
     // Hash the POST'd password by creating a salt after going
     // through hashRounds rounds of salt creation,
     // then continuting to add the data to the account table
-    bcrypt.hash(req.body.ssusn_password, hashRounds, function (err, bcryptedPass) {
-       req.body.ssusn_password = bcryptedPass;
+    bcrypt.hash(req.body.password, hashRounds, function (err, bcryptedPass) {
+       req.body.password = bcryptedPass;
        account.registerNewUser(req.body, function(err, result) {
             if (err) {
                 console.log("Could not register account:", err);
@@ -49,9 +49,9 @@ router.post('/login', function(req, res) {
         } else {
             // Compare the plantext password (first arg)
             // with the stored hash retrieved for our database
-            bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
+            bcrypt.compare(req.body.password, result[0].password, function(bcryptErr, bcryptRes) {
                 if (bcryptErr) {
-                    console.log("Could not auth for login", req.body.ssusn_email, bcryptErr);
+                    console.log("Could not auth for login", req.body.email, bcryptErr);
                     res.redirect(401, '/?login=false');
                 } else if (bcryptRes == true) {
                     req.session.user = result[0].id;
@@ -96,7 +96,7 @@ router.post('/logout', function(req, res) {
 
 // Endpoint for token-based authentication
 router.post('/token', function(req, res) {
-
+    
     // Fetch the user's password for comparison
     account.getUser(req.body, function(err, result) {
         if (err || result.length != 1) {
@@ -106,9 +106,9 @@ router.post('/token', function(req, res) {
 
             // Compare the plantext password (first arg)
             // with the stored hash retrieved for our database
-            bcrypt.compare(req.body.ssusn_password, result[0].password, function(bcryptErr, bcryptRes) {
+            bcrypt.compare(req.body.password, result[0].password, function(bcryptErr, bcryptRes) {
                 if (bcryptErr)
-                    console.log("Could not auth for token:", req.body.ssusn_email, bcryptErr);
+                    console.log("Could not auth for token:", req.body.email, bcryptErr);
 
                 if (bcryptRes == true) {
                     

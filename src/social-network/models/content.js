@@ -105,10 +105,11 @@ exports.createNewPost = function(params, callback) {
     
     console.log("new post params:", params);
     console.log("session", params.sess);
+    var user = (params.sess) ? params.sess.user : params.token.username;
     var now = Date.now() / 1000;
     var query = 'INSERT INTO content(user_id, timestamp) VALUES(?)';
     var queryData = [[
-        params.sess.user,
+        user,
         now 
     ]];
     conn.query(query, queryData, function(err, result) {
@@ -142,7 +143,7 @@ exports.createNewPost = function(params, callback) {
                             console.log("insert succeded for tags of ", postId, "inserted:", result);
                             console.log("pushing image", postId);
                             var storageParams = {
-                                user: params.sess.user,
+                                user: user,
                                 post: postId,
                                 image: params.file
                             };

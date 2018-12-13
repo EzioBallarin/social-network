@@ -40,7 +40,19 @@ router.post('/', function(req, res) {
             var tokenAuth = global.isTokenPresent(req);
             if (tokenAuth){
                 global.validateToken(req, res, function(req, res) {
-                    res.redirect('/');
+                    var params = {
+                        file: req.file,
+                        body: req.body,
+                        token: req.token
+                    }
+                    content.createNewPost(params, function(err, result) {
+                        if (err) {
+                            console.log("Could not create post:", err);
+                            res.status(400).send(err);
+                        } else {
+                            res.status(200).send(result);
+                        }
+                    });
                 });
             } else {
                 global.validateSession(req, res, function(req, res) {
