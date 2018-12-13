@@ -1,35 +1,63 @@
 var mysql = require('mysql');
 var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
+var path = require('path');
 var stream = require('stream');
+var sharp = require('sharp');
 
-function storeImage(params) {
+async function storeImage(params) {
     return new Promise(function(fulfill, reject) {
         const {Storage} = require('@google-cloud/storage');
         const storage = new Storage();
         const bucketName = 'ssu-social-network';
         const post = params.post;
         const user = params.user;
-        const fileName = params.image.originalname;
-        const file = storage.bucket(bucketName).file(user+ '/' +post);
+        const extension = path.extname(params.image.originalname);
+        
+        const files = [
+            storage.bucket(bucketName).file(user + '/' + post + '_original' + extension),
+            storage.bucket(bucketName).file(user + '/' + post + '_thumb' + extension),
+            storage.bucket(bucketName).file(user + '/' + post + '_medium' + extension),
+            storage.bucket(bucketName).file(user + '/' + post + '_default' + extension)
+        ];
+        const dimensions = [
+            {},
+            { width: 161, height: 161 },
+            { width: 612, height: 612 },
+            { width: 1080, height: 1080}
+        ]
         const metadata = {
             contentType: params.image.mimetype
         };
         
-        var fileStream = new stream.PassThrough();
-
-        fileStream.end(params.image.buffer);
-
-        fileStream.pipe(file.createWriteStream({metadata: metadata}))
-        .on('error', err => {
-          console.log("Couldn't upload " + fileName + ": ", err);
-          reject(err);
-        })
-        .on('finish', () => {
-              file.makePublic().then(() => {
-                  fulfill();                
-              });
-        });
+        for (const type of files) {
+            var imageCopy = new Buffer.alloc(params.image.buffer.length);
+            params.image.buffer.copy(imageCopy);
+            console.log(type, dimensions[type]); 
+            console.log("original image:", params.image.buffer);
+            console.log("base buffer: ", imageCopy);
+            // Resize the image to be the proper rendition, 
+            // then upload it to gcloud storage
+            sharp(imageCopy)
+            .resize(dimensions[type])
+            .toBuffer()
+            .then( data => { // data is the converted buffer
+                var typeStream = new stream.PassThrough();
+                typeStream.end(data);
+                typeStream.pipe(files[type].createWriteStream({resumable: false, metadata:metadata})
+                .on('error', err => {
+                    console.log("Couldn't upload " + params.image.originalname + " " + type);
+                    reject(err);
+                })
+                .on('finish', () => {
+                    types[type].makePublic();
+                }));
+            }).catch( err => {
+                console.log("couldn't convert " + params.image.originalname + " " + type);
+                reject(err);
+            });
+            console.log("did i happen after", type);
+        }
     });
 }
 

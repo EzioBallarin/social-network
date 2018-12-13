@@ -4,7 +4,6 @@ var bcrypt = require('bcrypt');
 var uuid = require('uuid/v1');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
-var sharp = require('sharp');
 var path = require('path');
 var Multer = require('multer');
 var multer = Multer({
