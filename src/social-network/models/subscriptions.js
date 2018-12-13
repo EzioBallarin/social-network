@@ -26,7 +26,9 @@ exports.viewSubscriptions = function(user_id, callback) {
 exports.viewSubscribers = function(user_id, callback) {
     var query = 'SELECT a.username FROM account a LEFT JOIN subscribers s on ' +
         ' s.subscribers = a.id WHERE s.user_id=(?);';
-    conn.query(query, user_id, function(err, result) {
+    var queryData = [[user_id]];
+    conn.query(query, queryData, function(err, result) {
+	console.log(query, err, result);
         callback(err, result);
     });
 };

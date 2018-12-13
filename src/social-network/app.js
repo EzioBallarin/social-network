@@ -46,9 +46,7 @@ app.use( (req, res, next) => {
 // Custom routes
 app.use('/', index);
 app.use('/account/', account);
-<<<<<<< HEAD
 app.use('/subscriptions/', subscriptions);
-=======
 app.use('/content/', content);
 
 global.isTokenPresent = function(req) {
@@ -94,6 +92,5 @@ global.validateSession = function(req, res, next) {
         }
     });
 };
->>>>>>> 328c2955302fd001f447b4fedfb992ecdff09dd7
 
 module.exports = app;

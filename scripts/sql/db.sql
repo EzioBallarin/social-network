@@ -58,11 +58,7 @@ CREATE TABLE IF NOT EXISTS post_tags (
 	FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-<<<<<<< HEAD
 CREATE TABLE IF NOT EXISTS subscriptions_user (
-=======
-CREATE TABLE IF NOT EXISTS subscriptions (
->>>>>>> 328c2955302fd001f447b4fedfb992ecdff09dd7
 	user_id INTEGER,
 	FOREIGN KEY(user_id) REFERENCES account(id),
 	subscription_id INTEGER NOT NULL
