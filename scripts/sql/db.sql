@@ -32,13 +32,6 @@ CREATE TABLE IF NOT EXISTS content (
 	FOREIGN KEY(user_id) REFERENCES account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
-CREATE TABLE IF NOT EXISTS images (
-        post_id INTEGER NOT NULL,
-	image BLOB NOT NULL,
-	FOREIGN KEY (post_id) REFERENCES content(post_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS comments (
         post_id INTEGER NOT NULL,
 	comment CHAR(200) NOT NULL,
