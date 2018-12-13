@@ -10,6 +10,7 @@ var index = require('./routes/index');
 var account = require('./routes/account');
 var subscriptions = require('./routes/subscriptions');
 var content = require('./routes/content');
+var explore = require('./routes/explore');
 
 var app = express();
 
@@ -48,6 +49,7 @@ app.use('/', index);
 app.use('/account/', account);
 app.use('/subscriptions/', subscriptions);
 app.use('/content/', content);
+app.use('/explore/', explore);
 
 global.isTokenPresent = function(req) {
     const authHeader = req.headers["authorization"];

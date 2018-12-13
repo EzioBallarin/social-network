@@ -39,16 +39,14 @@ CREATE TABLE IF NOT EXISTS comments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS tags (
-    tag_id INTEGER NOT NULL AUTO_INCREMENT,
     tag CHAR(200) NOT NULL,
-    PRIMARY KEY(tag_id),
-    UNIQUE KEY (tag_id)
+    PRIMARY KEY(tag)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS post_tags (
     post_id INTEGER NOT NULL,
-    tag_id INTEGER NOT NULL,
-    FOREIGN KEY (tag_id) REFERENCES tags(tag_id),
+    tag CHAR(200) NOT NULL,
+    FOREIGN KEY (tag) REFERENCES tags(tag),
     FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -60,8 +58,8 @@ CREATE TABLE IF NOT EXISTS subscriptions_user (
 
 CREATE TABLE IF NOT EXISTS subscriptions_tags (
     user_id INTEGER,
-    FOREIGN KEY(tag_id) REFERENCES tags(tag_id),
-    tag_id INTEGER NOT NULL
+    FOREIGN KEY(tag) REFERENCES tags(tag),
+    tag CHAR(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS subscribers (
@@ -69,6 +67,14 @@ CREATE TABLE IF NOT EXISTS subscribers (
     FOREIGN KEY(user_id) REFERENCES account(id),
     subscriber_id INTEGER NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO account (username, fname, lname, password, timestamp)
+VALUES ('johnDoe', 'John', 'Doe', 'jd123', '1');
+INSERT INTO account (username, fname, lname, password, timestamp)
+VALUES ('janeDoe', 'Jane', 'Doe', 'jd123', '2');
+
+INSERT INTO tags (tag) VALUE ('dog');
+INSERT INTO tags (tag) VALUE ('cat');
 
 CREATE USER IF NOT EXISTS 'social'@'%' IDENTIFIED by 'social';
 
