@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
-var fs = require('fs');
+var stream = require('stream');
 
 function storeImage(params) {
     return new Promise(function(fulfill, reject) {
@@ -12,22 +12,24 @@ function storeImage(params) {
         const post = params.post;
         const fileName = params.image.originalname;
         const file = storage.bucket(bucketName).file(fileName);
+        const metadata = {
+            contentType: params.image.mimetype
+        };
+        
+        var fileStream = new stream.PassThrough();
 
-        fs.createReadStream(params.image.buffer)
-          .pipe(file.CreateWriteStream({
-            metadata: {
-                contentType: params.image.mimetype
-            }
-           })
-          .on('error', err => {
-            console.log("Couldn't upload " + fileName + ": ", err);
-            reject(err);
-          })
-          .on('finish', () => {
-            file.makePublic().then(() => {
-                fulfill();                
-            });
-          }));
+        fileStream.end(params.image.buffer);
+
+        fileStream.pipe(file.createWriteStream({metadata: metadata}))
+        .on('error', err => {
+          console.log("Couldn't upload " + fileName + ": ", err);
+          reject(err);
+        })
+        .on('finish', () => {
+          file.makePublic().then(() => {
+              fulfill();                
+          });
+        });
 
     });
 }
