@@ -2,19 +2,26 @@
 <% if (locals.newAccount) { %>
     <div id="new-account">Successfully created account</div>
     <script>setTimeout(function(){document.getElementById('new-account').remove();},5000);</script>
-<% } console.log(locals);%> 
-<h1>Social Network</h1>
+<% } %> 
+<h1>Social Network Dev</h1>
 <% if (locals.session.isLogged) { %>
 <div> hello logged in user </div>
 <form action="account/logout" method="post" id="ssusn-logout">
     <button type="submit">Logout</button>
 </form>
-<form action="content" method="post" id="ssusn-new-content">
-    <input type="file" name="image"/><br/>
+
+<a href='/subscriptions'>View Subscriptions</a>
+<br />
+<a href='/subscriptions/subscribers'>View Subscribers</a>
+<form action="content" method="post" id="ssusn-new-content" enctype="multipart/form-data">
+    <input type="file" name="image_name"/><br/>
+    <label>Description</label>
+    <textarea name="image_desc"/></textarea><br/>
+    <label>Tag</label>
+    <input type="text" name="image_tags"/>
     <input type="submit"/>
 </form>
-<a href='/subscriptions'>View Subscriptions</a>
-<a href='/content'>Create Post</a>
+<h3>My posts</h3>
 <% } else { %>
 <form action="account/login" method="post" id="ssusn-login">
     <label>Email</label>

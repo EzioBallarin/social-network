@@ -8,8 +8,8 @@ var session = require('express-session'); // session data for login/logout
 // Routes
 var index = require('./routes/index');
 var account = require('./routes/account');
-var content = require('./routes/content');
 var subscriptions = require('./routes/subscriptions');
+var content = require('./routes/content');
 
 var app = express();
 
@@ -50,16 +50,55 @@ app.use('/subscriptions/', subscriptions);
 app.use('/content/', content);
 app.use('/subscriptions/', subscriptions);
 
+global.isTokenPresent = function(req) {
+    const authHeader = req.headers["authorization"];
+    if (typeof authHeader === 'undefined')
+        return false;
+    const bearer = authHeader.split(" ");
+    if (typeof bearer === 'undefined')
+        return false;
+    else 
+        return true;
+}
+
 global.validateToken = function(req, res, next) {
-    const authHeader = req.headers["authroization"];
-    if (typeof bearer !== 'undefined') {
-        const bearer = authHeader.split(" ");
-        const token = bearer[1];
+    if (isTokenPresent(req)) {
+        const token = req.headers["authorization"].split(" ")[1];
         req.token = token;
-        next();
+        next(req, res);
     } else {
         res.status(403).send('Invalid token'); 
     }
 };
+
+global.validateSession = function(req, res, next) {
+    var account = require('./models/account.js');
+    account.getSession(req.session, function(err, result) {
+        if (err) {
+            console.log("couldn't validate user:", err);
+            res.redirect(403, '/?loginValidation=false');
+        } else {
+            expiration = result[0].expiration;
+            var now = Date.now() / 1000;
+            if (now > expiration) {
+                account.deleteSession(req.session, function(err, result) {
+                    if (err) {
+                        console.log("could not delete session", req.session, err);
+                    }
+                    res.redirect(403, '/?loginValidation=false');
+                });
+            } else {
+                next(req, res);
+            }
+        }
+    });
+};
+
+// End of the line error handler for URL not found
+app.use(function(err, req, res, next) {
+    console.log("404: ", err);
+    res.status(404);
+    res.send("Not found");
+});
 
 module.exports = app;

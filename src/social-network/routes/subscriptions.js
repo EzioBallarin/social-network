@@ -20,8 +20,8 @@ router.get('/subscribers', function(req, res) {
 	    res.send(err);
 	}
 	else {
-	    validateToken(req, res, next);
-	    var user_id = jwt.verify(token, process.env.JWT_SECRET);
+	    //validateToken(req, res, next);
+	    //var user_id = jwt.verify(token, process.env.JWT_SECRET);
 	    res.render('subscriptions/viewSubscribers', { 'user_id':result });
 	}
     });

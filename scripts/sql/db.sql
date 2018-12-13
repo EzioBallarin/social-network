@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS account (
 
 CREATE TABLE IF NOT EXISTS sessions (
     session CHAR(36) NOT NULL,
-    username CHAR(30) not null,
+    user_id INTEGER NOT NULL, 
     expiration BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY(session)
+    PRIMARY KEY(session),
+    FOREIGN KEY(user_id) REFERENCES account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS content (
@@ -43,40 +44,41 @@ CREATE TABLE IF NOT EXISTS images (
 	DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS comments (
-        post_id INTEGER NOT NULL,
-	comment CHAR(200) NOT NULL,
-	FOREIGN KEY(post_id) REFERENCES content(post_id)
+    post_id INTEGER NOT NULL,
+    comment CHAR(200) NOT NULL,
+    FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS tags (
-        tag_id INTEGER NOT NULL AUTO_INCREMENT,
-    	tag CHAR(200) NOT NULL,
-	PRIMARY KEY(tag_id)
+    tag_id INTEGER NOT NULL AUTO_INCREMENT,
+    tag CHAR(200) NOT NULL,
+    PRIMARY KEY(tag_id),
+    UNIQUE KEY (tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS post_tags (
-        post_id INTEGER NOT NULL,
-	tag_id INTEGER NOT NULL,
-	FOREIGN KEY (tag_id) REFERENCES tags(tag_id),
-	FOREIGN KEY(post_id) REFERENCES content(post_id)
+    post_id INTEGER NOT NULL,
+    tag_id INTEGER NOT NULL,
+    FOREIGN KEY (tag_id) REFERENCES tags(tag_id),
+    FOREIGN KEY(post_id) REFERENCES content(post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS subscriptions_user (
-	user_id INTEGER,
-	FOREIGN KEY(user_id) REFERENCES account(id),
-	subscription_id INTEGER NOT NULL
+    user_id INTEGER,
+    FOREIGN KEY(user_id) REFERENCES account(id),
+    subscription_id INTEGER NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS subscriptions_tags (
-        user_id INTEGER,
-        FOREIGN KEY(tag_id) REFERENCES tags(tag_id),
-        tag_id INTEGER NOT NULL
+    user_id INTEGER,
+    FOREIGN KEY(tag_id) REFERENCES tags(tag_id),
+    tag_id INTEGER NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS subscribers (
-	user_id INTEGER,
-	FOREIGN KEY(user_id) REFERENCES account(id),
-	subscriber_id INTEGER NOT NULL
+    user_id INTEGER,
+    FOREIGN KEY(user_id) REFERENCES account(id),
+    subscriber_id INTEGER NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE USER IF NOT EXISTS 'social'@'%' IDENTIFIED by 'social';

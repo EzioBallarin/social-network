@@ -5,7 +5,7 @@
 set pipefail
 
 # remove all the running  containers
-docker rm -fv `docker ps -aq`
+docker rm -fv `docker ps -aq` > /dev/null
 
 # Create minibank network if it does not exist
 docker network ls -f "driver=bridge" | grep ' social ' > /dev/null || docker network create social 

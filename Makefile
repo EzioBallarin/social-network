@@ -20,6 +20,9 @@ mariadb:
 run-images: ssu-social-network mariadb
 	./scripts/run-images.sh
 
+run-images-dev: ssu-social-network mariadb
+	./scripts/run-images-dev.sh
+
 push-images:
 	gcloud docker -- push $(REGISTRY)/ssu-social-network:latest
 	gcloud docker -- push $(REGISTRY)/ssu-mariadb:latest
