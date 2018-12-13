@@ -5,13 +5,13 @@ var stream = require('stream');
 
 function storeImage(params) {
     return new Promise(function(fulfill, reject) {
-        console.log("storeImage params: ", params);
         const {Storage} = require('@google-cloud/storage');
         const storage = new Storage();
         const bucketName = 'ssu-social-network';
         const post = params.post;
+        const user = params.user;
         const fileName = params.image.originalname;
-        const file = storage.bucket(bucketName).file(fileName);
+        const file = storage.bucket(bucketName).file(user+ '/' +post);
         const metadata = {
             contentType: params.image.mimetype
         };
@@ -26,11 +26,10 @@ function storeImage(params) {
           reject(err);
         })
         .on('finish', () => {
-          file.makePublic().then(() => {
-              fulfill();                
-          });
+              file.makePublic().then(() => {
+                  fulfill();                
+              });
         });
-
     });
 }
 
@@ -63,9 +62,8 @@ exports.createNewPost = function(params, callback) {
                     callback(err, result);
                 } else {
                     console.log("insert succeeded for comments of", postId, "inserted:", result);
-                    var tagsQuery = "INSERT INTO tags(post_id, tag) VALUES (?)";
+                    var tagsQuery = "INSERT INTO tags(tag) VALUES (?)";
                     var tagsData = [[
-                        postId,
                         params.body.image_tags
                     ]];
                     conn.query(tagsQuery, tagsData, function(err, result) {
@@ -76,6 +74,7 @@ exports.createNewPost = function(params, callback) {
                             console.log("insert succeded for tags of ", postId, "inserted:", result);
                             console.log("pushing image", postId);
                             var storageParams = {
+                                user: params.sess.user,
                                 post: postId,
                                 image: params.file
                             };
