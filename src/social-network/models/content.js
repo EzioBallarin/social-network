@@ -138,26 +138,33 @@ exports.getPost = function(post_id, callback) {
 	var query = 'SELECT * FROM content WHERE post_id=(?);';
 	var queryData = [[post_id]];
 	conn.query(query, queryData, function(err, result) {
+		console.log(query, queryData, result);
 		callback(err, result);
 	});
 };
 
 
 exports.changePost = function(params, callback) {
-	var query = 'UPDATE content SET description = ? WHERE post_id = ?';
+	var query = 'UPDATE content SET description = ?, tag = ? WHERE post_id = ? AND user_id = ?';
 	var queryData = [
-		params.description,
-		params.post_id
+		params.body.image_desc,
+		params.body.image_tag,
+		params.post_id,
+		params.sess.user
 	];
+	console.log("running");
 	conn.query(query, queryData, function(err, result) {
+		console.log(query, queryData, result);
 		callback(err, result);
 	});
 };
 
 
 exports.deletePost = function(params, callback) {
-	var query = 'DELETE * FROM content WHERE post_id = ?';
-	var queryData = [params.post_id];
+	var query = 'DELETE FROM content WHERE post_id = ?';
+	var queryData = [
+		params.post_id,
+	];
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});

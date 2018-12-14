@@ -1,7 +1,7 @@
-<%- include('../includes/header.ejs', {title:"View Post"}); %>
-<h1>View Post</h1>
+<%- include('../includes/header.ejs', {title:"View Feed"}); %>
+<h1>View Your Feed</h1>
 <br />
-<h2>Here are all of your posts!</h2>
+<h2>Here are all of your posts from users and tags that you are subscribed to!</h2>
 <% for(var i=0; i < result.length; i++) { %>
 	<ul>
 		<h3><a href="./<%= result[i].post_id %>">Post: <%= result[i].post_id%></a></h3>

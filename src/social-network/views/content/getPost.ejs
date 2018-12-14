@@ -1,17 +1,33 @@
 <%- include('../includes/header.ejs', {title:"View Post"}); %>
-<h1>View Post <%= result[i].post_id %></h1>
+<h1>View Post <%= result[0].post_id %></h1>
 <br />
-<h2>Here are the results from post <%= result[i].post_id %>!</h2>
-	<ul>
-		<h3><a href="/<%= result[i].post_id %>">Post: <%= result[i].post_id%></a></h3>
-		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_default.jpg">Default Image</a></li>
-		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_medium.jpg">Medium Image</a></li>
-		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_thumb.jpg">Thumbnail Image</a></li>
-		<li>Image Description: <%= result[i].description %></li>
-		<li>Image Tag: <%= result[i].tag %></li>
-		</ul>
-		<% } %>
+<h2>Here are the results from post <%= result[0].post_id %>!</h2>
+<ul>
+	<h3>Post: <%= result[0].post_id%></h3>
+	<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[0].user_id%>/<%= result[0].post_id%>_default.jpg">Default Image</a></li>
+	<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[0].user_id%>/<%= result[0].post_id%>_medium.jpg">Medium Image</a></li>
+	<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[0].user_id%>/<%= result[0].post_id%>_thumb.jpg">Thumbnail Image</a></li>
+	<li>Image Description: <%= result[0].description %></li>
+	<li>Image Tag: <%= result[0].tag %></li>
+	</ul>
+
+	<form action="./<%= result[0].post_id %>" method="post">
+		<label>Enter New Description</label>
 		<br />
+		<input type="text" name="image_desc" placeholder="Enter new description"/></textarea>
+		<br />
+		<label>Enter New Tag</label>
+		<br />
+		<input type="text" name="image_tag" placeholder="Enter new tag"/>
+		<input type="submit" name="changePost"/>
+
 		<br />
 
-		<%- include('../includes/footer.ejs'); %>
+	<form action="./<%= result[0].post_id %>" method="delete">
+		<label> Click Here To Delete Your Post</label>
+		<input type="submit"/>
+
+	<br />
+	<br />
+
+	<%- include('../includes/footer.ejs'); %>
