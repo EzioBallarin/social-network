@@ -184,15 +184,9 @@ exports.createNewPost = function(params, callback) {
     });
 };*/
 
-<<<<<<< HEAD
-exports.getPost = function(params, callback) {
-	var query = 'SELECT * FROM content WHERE post_id=(?);';
-	var queryData = [[params.post_id]];
-=======
 exports.getPost = function(post_id, callback) {
 	var query = 'SELECT * FROM content WHERE post_id=(?);';
 	var queryData = [[post_id]];
->>>>>>> 55d8fd0c98e5ce7c0871234c5c60d9d4c259f49b
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});
@@ -228,10 +222,7 @@ exports.deletePost = function(params, callback) {
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});
-<<<<<<< HEAD
-=======
 };
-
 
 exports.getUserPost = function(params, callback) {
 	var query = 'SELECT * FROM content WHERE user_id = (?);';
@@ -240,5 +231,4 @@ exports.getUserPost = function(params, callback) {
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});
->>>>>>> 55d8fd0c98e5ce7c0871234c5c60d9d4c259f49b
 };
