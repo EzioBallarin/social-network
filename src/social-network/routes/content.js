@@ -63,4 +63,23 @@ router.post('/', function(req, res) {
     });
 });
 
+
+router.put('/', function(req, res) {
+	global.validateSession(req, res, function(req, res) {
+		var params = {
+			file: req.file,
+			body: req.body,
+			sess: req.session
+		};
+		content.changePost(params, function(err, result) {
+			if (err) {
+				console.log("Could not access post:", err);
+				res.redirect('/?changePost=false');
+			} else {
+				res.redirect('/?changePost=true');
+			}	
+		});
+	});
+});
+
 module.exports = router;
