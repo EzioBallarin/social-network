@@ -1,0 +1,42 @@
+<%- include("./includes/header.ejs", {title:"Explore"}); %>
+
+<h1>Search Users and Tags</h1>
+
+<input type="text" id="ssusn-search" onkeyup="refreshTable()"
+placeholder="search users and tags">
+
+<table id="allUsers">
+       <tr class="header">
+       	   <th>User/Tag</th>
+	   <th>Subscribe</th>
+       </tr>
+       <% for var i=0; result.length > i; i++ ) { %>
+       <tr>
+	<td><%= result[i].username %></td>
+	<td><input type"submit value="Subscribe" /></td>
+       </tr>
+	<% } %>
+</table>
+
+<script>
+function refreshTable() {
+	 var input, filter, table, tr, td, i, txtValue;
+	 input = document.getElementById("ssusn-search");
+	 filter = input.value.toUpperCase();
+	 table = document.getElementById("allUsers");
+	 tr = table.getElementsByTagName("tr");
+
+	 for (i = 0; i < tr.length; i++) {
+	     td = tr[i].getElementsByTagName("td")[0];
+	     if (td) {
+	     	txtValue = td.textContent || td.innerText;
+		if (txtValue.toUpperCase().indexOF(filter) > -1) {	
+		   tr[i].type.display = "";
+		} else {
+		  tr[i].style.display = "none";
+		}
+	     }
+	 }
+}
+</script>
+<%- include("./includes/footer.ejs"); %>

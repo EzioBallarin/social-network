@@ -1,0 +1,18 @@
+<%- include('../includes/header.ejs', {title:"View Post"}); %>
+<h1>View Post</h1>
+<br />
+<h2>Here are all of your posts!</h2>
+<% for(var i=0; i < result.length; i++) { %>
+	<ul>
+		<h3><a href="content/<%= result[i].post_id %>">Post: <%= result[i].post_id%></a></h3>
+		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_default.jpg">Default Image</a></li>
+		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_medium.jpg">Medium Image</a></li>
+		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_thumb.jpg">Thumbnail Image</a></li>
+		<li>Image Description: <%= result[i].description %></li>
+		<li>Image Tag: <%= result[i].tag %></li>
+		</ul>
+		<% } %>
+		<br />
+		<br />
+
+		<%- include('../includes/footer.ejs'); %>

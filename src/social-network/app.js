@@ -10,6 +10,7 @@ var index = require('./routes/index');
 var account = require('./routes/account');
 var subscriptions = require('./routes/subscriptions');
 var content = require('./routes/content');
+var search = require('./routes/search');
 
 var app = express();
 
@@ -48,6 +49,7 @@ app.use('/', index);
 app.use('/account/', account);
 app.use('/subscriptions/', subscriptions);
 app.use('/content/', content);
+app.use('/search/', search);
 
 global.isTokenPresent = function(req) {
     const authHeader = req.headers["authorization"];
@@ -81,10 +83,13 @@ global.validateToken = function(req, res, next) {
 global.validateSession = function(req, res, next) {
     var account = require('./models/account.js');
     account.getSession(req.session, function(err, result) {
+        // Session was not retrievable from database
         if (err) {
             console.log("couldn't validate user:", err);
             res.redirect(403, '/?loginValidation=false');
-        } else {
+        // Optimal state, where we have only 1 session
+        // in the database for this user
+        } else if (result.length == 1){
             expiration = result[0].expiration;
             var now = Date.now() / 1000;
             if (now > expiration) {
@@ -97,6 +102,10 @@ global.validateSession = function(req, res, next) {
             } else {
                 next(req, res);
             }
+        // Otherwise, the user either has never logged in
+        // or has logged in "too many" times
+        } else {
+            res.redirect(403, '/?loginValidation=false');
         }
     });
 };
