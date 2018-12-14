@@ -132,7 +132,7 @@ exports.createNewPost = function(params, callback) {
 		callback(err, result);
 		// delete closing tags if uncommenting block
 	});
-};
+});
 
 
 

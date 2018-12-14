@@ -66,9 +66,17 @@ global.isTokenPresent = function(req) {
 
 global.validateToken = function(req, res, next) {
     if (isTokenPresent(req)) {
+        const jwt = require('jsonwebtoken');
         const token = req.headers["authorization"].split(" ")[1];
-        req.token = token;
-        next(req, res);
+        jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+            if (err) {
+                console.log("jwt very error:", err);
+                res.status(403).send(err);
+            } else { 
+                req.token = decoded;
+                next(req, res);
+            }
+        });
     } else {
         res.status(403).send('Invalid token'); 
     }

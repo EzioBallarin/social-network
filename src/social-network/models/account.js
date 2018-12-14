@@ -7,10 +7,10 @@ exports.registerNewUser = function(params, callback) {
     var now = Date.now() / 1000;
     var query = 'INSERT INTO account(username, fname, lname, password, timestamp) VALUES(?)';
     var queryData = [[
-        params.ssusn_email, 
-        params.ssusn_fname, 
-        params.ssusn_lname,
-        params.ssusn_password,
+        params.email, 
+        params.fname, 
+        params.lname,
+        params.password,
         now 
     ]];
     conn.query(query, queryData, function(err, result) {
@@ -21,7 +21,7 @@ exports.registerNewUser = function(params, callback) {
 exports.getUser = function(params, callback) {
     var query = 'SELECT password, id FROM account WHERE username = ?';
     var queryData = [[
-        params.ssusn_email
+        params.email
     ]];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
@@ -30,7 +30,7 @@ exports.getUser = function(params, callback) {
 
 exports.deleteUser = function(params, callback) {
     var query = 'DELETE FROM account WHERE username=?';
-    var queryData = [[params.ssusn_email]];
+    var queryData = [[params.email]];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
     });
