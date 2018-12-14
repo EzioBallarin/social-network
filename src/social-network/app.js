@@ -75,10 +75,13 @@ global.validateToken = function(req, res, next) {
 global.validateSession = function(req, res, next) {
     var account = require('./models/account.js');
     account.getSession(req.session, function(err, result) {
+        // Session was not retrievable from database
         if (err) {
             console.log("couldn't validate user:", err);
             res.redirect(403, '/?loginValidation=false');
-        } else {
+        // Optimal state, where we have only 1 session
+        // in the database for this user
+        } else if (result.length == 1){
             expiration = result[0].expiration;
             var now = Date.now() / 1000;
             if (now > expiration) {
@@ -91,6 +94,10 @@ global.validateSession = function(req, res, next) {
             } else {
                 next(req, res);
             }
+        // Otherwise, the user either has never logged in
+        // or has logged in "too many" times
+        } else {
+            res.redirect(403, '/?loginValidation=false');
         }
     });
 };

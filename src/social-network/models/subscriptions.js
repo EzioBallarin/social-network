@@ -22,10 +22,10 @@ exports.subscribeUser = function(params, callback) {
     });
 };
 
-exports.viewSubscriptions = function(params, callback) {
+exports.viewSubscriptions = function(user_id, callback) {
     var query = 'SELECT a.username FROM account a LEFT JOIN subscriptions_user s on ' +
 	' s.subscription_id = a.id WHERE s.user_id=(?);';
-    var queryData = [params.sess.user];
+    var queryData = [[user_id]];
     console.log(query, queryData);
     conn.query(query, queryData, function(err, result) {
 	console.log(query, err, result);
@@ -36,8 +36,9 @@ exports.viewSubscriptions = function(params, callback) {
 exports.viewSubscribers = function(user_id, callback) {
     var query = 'SELECT a.username FROM account a LEFT JOIN subscribers s on ' +
         ' s.subscriber_id = a.id WHERE s.user_id=(?);';
+    console.log(user_id);
     conn.query(query, user_id, function(err, result) {
-	console.log(query, err, result);
+	    console.log(query, err, result);
         callback(err, result);
     });
 };
