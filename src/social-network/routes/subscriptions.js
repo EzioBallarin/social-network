@@ -3,15 +3,29 @@ var router = express.Router();
 var subscriptions = require('../models/subscriptions.js');
 
 router.get('/', function(req, res) {
-    subscriptions.viewSubscriptions(0, function(err, result) {
-	if(err) {
-	    res.send(err);
-	}
-	else {
-	    //var user_id = jwt.verify(token, process.env.JWT_SECRET);
-	    res.render('subscriptions/viewSubscriptions', { 'user_id':result });
-	}
-    });
+    var tokenAuth = global.isTokenPresent(req);
+    if (tokenAuth){
+	global.validateToken(req, res, function(req, res) {
+            res.redirect('/');
+	});
+    } else {
+	global.validateSession(req, res, function(req, res) {
+            var params = {
+		file: req.file,
+		body: req.body,
+		sess: req.session
+            };
+	    subscriptions.viewSubscriptions(params, function(err, result) {
+		if(err) {
+		    res.send(err);
+		}
+		else {
+		    //var user_id = jwt.verify(token, process.env.JWT_SECRET);
+		    res.render('subscriptions/viewSubscriptions', { 'result':result });
+		}
+	    });
+	});
+    }
 });
 
 router.get('/subscribers', function(req, res) {

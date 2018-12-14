@@ -6,8 +6,10 @@ var conn = mysql.createConnection(db.config);
 exports.viewAll = function(params, callback) {
     var query = 'SELECT * FROM content WHERE description=(?) OR tag=(?);';
     var queryData = [[
-	params.ssusn-search
+	params.search_data,
+	params.search_data
     ]];
+    console.log(query, queryData, err);
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
     });
