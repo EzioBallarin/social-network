@@ -64,22 +64,84 @@ router.post('/', function(req, res) {
 });
 
 
-router.put('/', function(req, res) {
-	global.validateSession(req, res, function(req, res) {
-		var params = {
-			file: req.file,
-			body: req.body,
-			sess: req.session
-		};
-		content.changePost(params, function(err, result) {
-			if (err) {
-				console.log("Could not access post:", err);
-				res.redirect('/?changePost=false');
-			} else {
-				res.redirect('/?changePost=true');
-			}	
+
+router.get('/:post_id', function(req, res) {
+	content.getPost(params, function(err, result) {
+		if (err) {
+			console.log("Could not get post:", err);
+			res.redirect('/?getPost=false');
+		} else {
+			res.render('content/:post_id', { 'result':result});
+			res.redirect('/?getPost=true');
+		}
+	});
+	
+});
+
+
+router.put('/:post_id', function(req, res) {
+	upload(req, res, function(err) {
+        if (err) {
+            console.log(err);
+            res.redirect('back');
+        } else {
+            var tokenAuth = global.isTokenPresent(req);
+            if (tokenAuth){
+                global.validateToken(req, res, function(req, res) {
+                    res.redirect('/');
+                });
+            } else {
+                global.validateSession(req, res, function(req, res) {
+                    var params = {
+                        file: req.file,
+                        body: req.body,
+                        sess: req.session
+                    };
+			content.changePost(params, function(err, result) {
+				if (err) {
+					console.log("Could not access post:", err);
+					res.redirect('/?changePost=false');
+				} else {
+					res.redirect('/?changePost=true');i
+				}
+			});
 		});
+	    }
+	}
 	});
 });
+
+router.delete('/:post_id', function(req, res) {
+	upload(req, res, function(err) {
+        if (err) {
+            console.log(err);
+            res.redirect('back');
+        } else {
+            var tokenAuth = global.isTokenPresent(req);
+            if (tokenAuth){
+                global.validateToken(req, res, function(req, res) {
+                    res.redirect('/');
+                });
+            } else {
+                global.validateSession(req, res, function(req, res) {
+			var params = {
+                                file: req.file,
+                                body: req.body,
+                                sess: req.session
+                        };
+			content.deletePost(params, function(err, result) {
+				if(err) {
+					console.log("Could not delete post:", err);
+					res.redirect('deletePost=false');
+				} else {
+					res.redirect('deletePost=true');
+				}
+			});
+		});
+	    }
+	}
+	});
+});
+
 
 module.exports = router;

@@ -1,0 +1,14 @@
+<%- include('../includes/header.ejs', {title:"Subscribers"}); %>
+<a href="/subscriptions">view subscriptions</a>
+<h1>Subscribers</h1>
+<br />
+<ul>
+	<h2>users that are subscribed to you</h2>
+	<% for(var i=0; i < result.length; i++) { %>
+	   	<li><%= result[i] %></li>
+       	<% } %>
+</ul>
+<br />
+<br />
+
+<%- include('../includes/footer.ejs'); %>
