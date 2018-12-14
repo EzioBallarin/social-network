@@ -114,21 +114,21 @@ exports.createNewPost = function(params, callback) {
 		params.body.image_tags
 	]];
 	conn.query(query, queryData, function(err, result) {
-		console.log("pushing image", postId);                           
-		var storageParams = {                                          
+		console.log("pushing image", result.insertId);
+		var storageParams = {
 			user: params.sess.user,
-			post: postId,                                             
-			image: params.file                                          
-		};                                                              
-		storeImage(storageParams)                                       
-			.then((result)=>{                                               
-				console.log("pushing to gcloud succeeded");                 
-				callback(null, result);                                     
-			})                                                              
-			.catch((err) => {                                               
-				console.log("error from pushing to gcloud", err);           
-				callback(err, null);                                        
-			}); 
+			post: result.insertId,
+			image: params.file
+		};
+		storeImage(storageParams)
+			.then((result)=>{
+				console.log("pushing to gcloud succeeded");
+				callback(null, result);
+			})
+			.catch((err) => {
+				console.log("error from pushing to gcloud", err);
+				callback(err, null);
+			});
 		callback(err, result);
 		// delete closing tags if uncommenting block
 	});
@@ -184,9 +184,15 @@ exports.createNewPost = function(params, callback) {
     });
 };*/
 
+<<<<<<< HEAD
 exports.getPost = function(params, callback) {
 	var query = 'SELECT * FROM content WHERE post_id=(?);';
 	var queryData = [[params.post_id]];
+=======
+exports.getPost = function(post_id, callback) {
+	var query = 'SELECT * FROM content WHERE post_id=(?);';
+	var queryData = [[post_id]];
+>>>>>>> 55d8fd0c98e5ce7c0871234c5c60d9d4c259f49b
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});
@@ -222,4 +228,17 @@ exports.deletePost = function(params, callback) {
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});
+<<<<<<< HEAD
+=======
+};
+
+
+exports.getUserPost = function(params, callback) {
+	var query = 'SELECT * FROM content WHERE user_id = (?);';
+	var queryData = [[params.sess.user]];
+	console.log("Inide of getUserPosts:", query, queryData)
+	conn.query(query, queryData, function(err, result) {
+		callback(err, result);
+	});
+>>>>>>> 55d8fd0c98e5ce7c0871234c5c60d9d4c259f49b
 };
