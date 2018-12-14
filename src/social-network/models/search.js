@@ -4,7 +4,8 @@ var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
 
 exports.viewAll = function(params, callback) {
-    var query = 'SELECT * FROM content WHERE description=(?) OR tag=(?);';
+    var query = 'SELECT c.*, a.username FROM content c LEFT JOIN account a ON ' +
+	'c.user_id = a.id WHERE c.description=(?) OR c.tag=(?);';
     var queryData = [
 	params['search_data'],
 	params['search_data']

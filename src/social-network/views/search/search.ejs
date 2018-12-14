@@ -1,7 +1,19 @@
-<%- include("../includes/header.ejs", {title:"Search"}); %>
+<%- include('../includes/header.ejs', {title:"View Post"}); %>
+<h1>Matching Content:</h1>
+<br />
+<% for(var i=0; i < result.length; i++) { %>
+		<ul>
+		Subscribe to User:
+		<a href="search/subscribe"><%= result[i].username%></a>
+		<br />
+		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_default.jpg">Default Image</a></li>
+		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_medium.jpg">Medium Image</a></li>
+		<li><a href="http://storage.googleapis.com/ssu-social-network/<%= result[i].user_id%>/<%= result[i].post_id%>_thumb.jpg">Thumbnail Image</a></li>
+		<li>Image Description: <%= result[i].description %></li>
+		<li>Image Tag: <%= result[i].tag %></li>
+		</ul>
+		<% } %>
+		<br />
+		<br />
 
-<h1>Matching Content:<h1>
-
-
-
-<%- include("../includes/footer.ejs"); %>
+		<%- include('../includes/footer.ejs'); %>

@@ -15,6 +15,7 @@ router.get('/', function(req, res) {
 		body: req.body,
 		sess: req.session
             };
+	    console.log("params body: ", params.body);
 	    subscriptions.viewSubscriptions(params, function(err, result) {
 		if(err) {
 		    res.send(err);
@@ -29,16 +30,58 @@ router.get('/', function(req, res) {
 });
 
 router.get('/subscribers', function(req, res) {
-    subscriptions.viewSubscribers(0, function(err, result) {
-	if (err) {
-	    res.send(err);
-	}
-	else {
-	    //validateToken(req, res, next);
-	    //var user_id = jwt.verify(token, process.env.JWT_SECRET);
-	    res.render('subscriptions/viewSubscribers', { 'user_id':result });
-	}
-    });
+    var tokenAuth = global.isTokenPresent(req);
+    if (tokenAuth){
+        global.validateToken(req, res, function(req, res) {
+            res.redirect('/');
+        });
+    } else {
+        global.validateSession(req, res, function(req, res) {
+            var params = {
+                file: req.file,
+                body: req.body,
+                sess: req.session
+            };
+            console.log("params body: ", params.body);
+	    subscriptions.viewSubscribers(params, function(err, result) {
+		if (err) {
+		    res.send(err);
+		}
+		else {
+		    //validateToken(req, res, next);
+		    //var user_id = jwt.verify(token, process.env.JWT_SECRET);
+		    res.render('subscriptions/viewSubscribers', { 'user_id':result });
+		}
+	    });
+	});
+    }
+});
+
+router.post('/', function(req, res) {
+    var tokenAuth = global.isTokenPresent(req);
+    if (tokenAuth){
+        global.validateToken(req, res, function(req, res) {
+            res.redirect('/');
+        });
+    } else {
+        global.validateSession(req, res, function(req, res) {
+            var params = {
+                file: req.file,
+                body: req.body,
+                sess: req.session,
+		subs: req.query
+            };
+            console.log("params body: ", params.body);
+	    subscriptions.subscribeUser(params, function(err, result) {
+		if (err) {
+		    res.send(err);
+		}
+		else {
+		    res.send("succesfully subscribed!");
+		}
+	    });
+	});
+    }
 });
 
 module.exports = router;
