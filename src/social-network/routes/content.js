@@ -71,7 +71,7 @@ router.get('/:post_id', function(req, res) {
 			console.log("Could not get post:", err);
 			res.redirect('/?getPost=false');
 		} else {
-			res.render('content/:post_id', { 'result':result});
+			res.render('content/getPost', { 'result':result});
 			res.redirect('/?getPost=true');
 		}
 	});
