@@ -30,8 +30,10 @@ exports.getUser = function(params, callback) {
 
 exports.deleteUser = function(params, callback) {
     var query = 'DELETE FROM account WHERE username=?';
-    var queryData = [[params.email]];
-    conn.query(query, queryData, function(err, result) {
+    console.log("received params deleteUser", params);
+    conn.query(query, params.email, function(err, result) {
+        console.log('Deleting ' + params.email, err, result);
+        console.log(query);
         callback(err, result);
     });
 };

@@ -121,16 +121,14 @@ exports.createNewPost = function(params, callback) {
 			image: params.file
 		};
 		storeImage(storageParams)
-			.then((result)=>{
-				console.log("pushing to gcloud succeeded");
-				callback(null, result);
-			})
-			.catch((err) => {
-				console.log("error from pushing to gcloud", err);
-				callback(err, null);
-			});
-		callback(err, result);
-		// delete closing tags if uncommenting block
+        .then((result)=>{
+            console.log("pushing to gcloud succeeded");
+            callback(null, result);
+        })
+        .catch((err) => {
+            console.log("error from pushing to gcloud", err);
+            callback(err, null);
+        });
 	});
 };
 

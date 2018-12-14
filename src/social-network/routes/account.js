@@ -142,7 +142,10 @@ router.delete('/token', global.validateToken, function(req, res) {
 */
 // Endpoint for deleting an account, used for testing only
 router.delete('/', function(req, res) {
+    console.log("running delete");
     account.deleteUser(req.body, function(err, result) {
+        console.log("delete finished");
+
         if (err) { 
             console.log("Could not delete user:", err);
             res.sendStatus(500);

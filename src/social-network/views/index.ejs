@@ -6,7 +6,7 @@
 <h1>Social Network Dev</h1>
 <% if (locals.session.isLogged) { %>
 <div> hello logged in user </div>
-<form action="account/logout" method="get" id="ssusn-logout">
+<form action="account/logout" method="post" id="ssusn-logout">
     <button type="submit">Logout</button>
 </form><br/>
 <form action="search" method="get" id="ssusn-search">

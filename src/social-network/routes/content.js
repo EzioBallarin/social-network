@@ -86,12 +86,9 @@ router.post('/', function(req, res) {
 						sess: req.session
 					};
 					content.createNewPost(params, function(err, result) {
-						if (err) {
+						if (err) 
 							console.log("Could not create post:", err);
-							res.redirect('/?newPost=false');
-						} else {
-							res.redirect('/?newPost=true');
-						}
+					    res.redirect('/?newPost=true');
 					});
 				});
 			}

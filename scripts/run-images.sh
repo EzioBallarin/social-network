@@ -14,4 +14,4 @@ docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=hobbes -v `pwd`/scripts/sql:/d
 
 sleep 5
 
-docker run -d --name social-network -e JWT_SECRET_KEY=minibank -p 80:80 --network social gcr.io/ssu-social-network/ssu-social-network:latest
+docker run -d --name social-network -p 80:80 --network social gcr.io/ssu-social-network/ssu-social-network:latest
