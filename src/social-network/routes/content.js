@@ -102,7 +102,7 @@ router.post('/', function(req, res) {
 
 
 router.get('/:post_id', function(req, res) {
-	content.getPost(0, function(err, result) {
+	content.getPost(req.params.post_id, function(err, result) {
 		if (err) {
 			console.log("Could not get post:", err);
 			res.redirect('/?getPost=false');
