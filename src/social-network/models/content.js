@@ -133,92 +133,40 @@ exports.createNewPost = function(params, callback) {
 		// delete closing tags if uncommenting block
 	});
 };
-// Fail fast if the insertion didn't go through 
-/* if (err) {
-	    console.log("error adding content:", err);
-	    callback(err, result);
-	} else {
-	    console.log("insert succeeded for", params, ", inserted:", result);
-	    var postId = result.insertId;
-	    var commentQuery = "INSERT INTO comments(post_id, comment) VALUES(?)";
-	    var commentData = [[
-		postId,
-		params.body.image_desc
-	    ]];
-	    conn.query(commentQuery, commentData, function(err, result) {
-		if (err) {
-		    console.log("error adding comments:", err);
-		    callback(err, result);
-		} else {
-		    console.log("insert succeeded for comments of", postId, "inserted:", result);
-		    var tagsQuery = "INSERT INTO tags(tag) VALUES (?)";
-		    var tagsData = [[
-			params.body.image_tags
-		    ]];
-		    conn.query(tagsQuery, tagsData, function(err, result) {
-			if (err)  {
-			    console.log("error adding tags:", err);
-			    callback(err, result);
-			} else {
-			    console.log("insert succeded for tags of ", postId, "inserted:", result);
-			    console.log("pushing image", postId);
-			    var storageParams = {
-				user: params.sess.user,
-				post: postId,
-				image: params.file
-			    };
-			    storeImage(storageParams)
-			    .then((result)=>{
-				console.log("pushing to gcloud succeeded");
-				callback(null, result);
-			    })
-			    .catch((err) => {
-				console.log("error from pushing to gcloud", err); 
-				callback(err, null);
-			    });
-			}
-		    });
-		}
-	    });
-	}
-    });
-};*/
+
+
 
 exports.getPost = function(post_id, callback) {
 	var query = 'SELECT * FROM content WHERE post_id=(?);';
 	var queryData = [[post_id]];
 	conn.query(query, queryData, function(err, result) {
+		console.log(query, queryData, result);
 		callback(err, result);
 	});
-	/*var query = 'SELECT cn.*, cm.*, t.* FROM content cn, comments cm, tags t WHERE cn.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
-    var queryData = [
-	params.post_id,
-	params.post_id,
-	params.post_id,
-	params.post_id
-    ];
-    conn.query(query, queryData, function(err, result) {
-	console.log("get post: ",result);
-	callback(err, result);
-    });*/
 };
 
 
 exports.changePost = function(params, callback) {
-	var query = 'UPDATE content SET description = ? WHERE post_id = ?';
+	var query = 'UPDATE content SET description = ?, tag = ? WHERE post_id = ? AND user_id = ?';
 	var queryData = [
-		params.description,
-		params.post_id
+		params.body.image_desc,
+		params.body.image_tag,
+		params.post_id,
+		params.sess.user
 	];
+	console.log("running");
 	conn.query(query, queryData, function(err, result) {
+		console.log(query, queryData, result);
 		callback(err, result);
 	});
 };
 
 
 exports.deletePost = function(params, callback) {
-	var query = 'DELETE * FROM content WHERE post_id = ?';
-	var queryData = [params.post_id];
+	var query = 'DELETE FROM content WHERE post_id = ?';
+	var queryData = [
+		params.post_id,
+	];
 	conn.query(query, queryData, function(err, result) {
 		callback(err, result);
 	});

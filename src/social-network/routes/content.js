@@ -114,7 +114,7 @@ router.get('/:post_id', function(req, res) {
 });
 
 
-router.put('/:post_id', function(req, res) {
+router.post('/:post_id', function(req, res) {
 	upload(req, res, function(err) {
 		if (err) {
 			console.log(err);
@@ -130,14 +130,18 @@ router.put('/:post_id', function(req, res) {
 					var params = {
 						file: req.file,
 						body: req.body,
-						sess: req.session
+						sess: req.session,
+						post_id: req.params.post_id,
+						data: req.query
 					};
+					console.log("change post req query: ", req.query);
+					console.log("Running changePost");
 					content.changePost(params, function(err, result) {
 						if (err) {
 							console.log("Could not access post:", err);
 							res.redirect('/?changePost=false');
 						} else {
-							res.redirect('/?changePost=true');i
+						 	res.redirect('/?changePost=true');
 						}
 					});
 				});
@@ -162,7 +166,8 @@ router.delete('/:post_id', function(req, res) {
 					var params = {
 						file: req.file,
 						body: req.body,
-						sess: req.session
+						sess: req.session,
+						post_id: req.params.post_id
 					};
 					content.deletePost(params, function(err, result) {
 						if(err) {
