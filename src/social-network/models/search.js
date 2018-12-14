@@ -4,12 +4,12 @@ var db = require('./db_connection');
 var conn = mysql.createConnection(db.config);
 
 exports.viewAll = function(params, callback) {
-    var query = 'SELECT username FROM account;';
-    var query2 = 'SELECT tags FROM tags;';
-    conn.query(query, function(err, result) {
-	conn.query(query, function(err, result) {
-            callback(err, result);
-	});
+    var query = 'SELECT * FROM content WHERE description=(?) OR tag=(?);';
+    var queryData = [[
+	params.ssusn-search
+    ]];
+    conn.query(query, queryData, function(err, result) {
+        callback(err, result);
     });
 };
 

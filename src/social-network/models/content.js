@@ -106,14 +106,20 @@ exports.createNewPost = function(params, callback) {
     console.log("new post params:", params);
     console.log("session", params.sess);
     var now = Date.now() / 1000;
-    var query = 'INSERT INTO content(user_id, timestamp) VALUES(?)';
+    var query = 'INSERT INTO content(user_id, timestamp, description, tag) VALUES(?)';
     var queryData = [[
         params.sess.user,
-        now 
+        now,
+	params.body.image_desc,
+	params.body.image_tags
     ]];
     conn.query(query, queryData, function(err, result) {
+	callback(err, result);
+	// delete closing tags if uncommenting block
+    });
+};
         // Fail fast if the insertion didn't go through 
-        if (err) {
+       /* if (err) {
             console.log("error adding content:", err);
             callback(err, result);
         } else {
@@ -161,10 +167,15 @@ exports.createNewPost = function(params, callback) {
             });
         }
     });
-};
+};*/
 
 exports.getPost = function(params, callback) {
-    var query = 'SELECT cn.*, cm.*, t.* FROM content cn, comments cm, tags t WHERE cn.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
+    var query = 'SELECT * FROM content WHERE post_id=(?);';
+    var queryData = [[params.post_id]];
+    conn.query(query, queryData, function(err, result) {
+	callback(err, result);
+    });
+    /*var query = 'SELECT cn.*, cm.*, t.* FROM content cn, comments cm, tags t WHERE cn.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
     var queryData = [
 	params.post_id,
 	params.post_id,
@@ -174,14 +185,14 @@ exports.getPost = function(params, callback) {
     conn.query(query, queryData, function(err, result) {
         console.log("get post: ",result);
         callback(err, result);
-    });
+    });*/
 };
 
 
 exports.changePost = function(params, callback) {
-    var query = 'UPDATE comments SET comment = ? WHERE comments.post_id = ?';
+    var query = 'UPDATE content SET description = ? WHERE post_id = ?';
     var queryData = [
-	params.comment,
+	params.description,
 	params.post_id
     ];
     conn.query(query, queryData, function(err, result) {
@@ -191,14 +202,8 @@ exports.changePost = function(params, callback) {
 
 
 exports.deletePost = function(params, callback) {
-    var query = 'DELETE * FROM content cn, comments cm, tags t WHERE cn.user_id = ? AND cn.post_id = ? AND post_id = ? AND t.post_id = ?';
-    var queryData = [
-	params.user_id,
-	params.post_id,
-	params.post_id,
-	params.post_id,
-	params.post_id
-    ];
+    var query = 'DELETE * FROM content WHERE post_id = ?';
+    var queryData = [params.post_id];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
     });

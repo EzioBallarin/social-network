@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
-var explore = require('../models/explore.js');
+var search = require('../models/search.js');
 
 router.get('/', function(req, res) {
-    explore.viewAll(function(err, result) {
+    search.viewAll(req.body.ssusn-search, function(err, result) {
 	if(err) {
 	    console.log(err);
 	    res.send(err);
 	}
 	else {
-	    res.render('explore/search', { 'result':result });
+	    res.render('search/search', {'result':result});
 	}
     });
 });
