@@ -1,0 +1,14 @@
+<%- include("./includes/header.ejs", {title:"Explore"}); %>
+
+<h1>Matching tags:</h1>
+
+<% for (var i=0; i < result.length; i++) { %>
+
+<form action="subscriptions/subscribe">
+      <input type="hidden" value="<%= result[i].username %>" />
+      <input type="submit" value="subscribe" />
+</form><br/>
+
+<% } %>
+
+<%- include("./includes/footer.ejs"); %>

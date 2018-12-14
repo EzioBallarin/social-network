@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/subscribers', function(req, res) {
-    subscriptions.viewSubscribers(function(err, result) {
+    subscriptions.viewSubscribers(0, function(err, result) {
 	if (err) {
 	    res.send(err);
 	}

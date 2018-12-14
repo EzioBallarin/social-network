@@ -26,41 +26,12 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE TABLE IF NOT EXISTS content (
     user_id INTEGER NOT NULL,
-	post_id INTEGER NOT NULL AUTO_INCREMENT,
-	timestamp BIGINT UNSIGNED NOT NULL,
-   	img LONGBLOB NOT NULL,
-	PRIMARY KEY(post_id),
-	FOREIGN KEY(user_id) REFERENCES account(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS images (
-    post_id INTEGER NOT NULL,
-	image_org BLOB NOT NULL,
-	image_def BLOB NOT NULL,
-	image_med BLOB NOT NULL,
-	image_thm BLOB NOT NULL,
-	FOREIGN KEY (post_id) REFERENCES content(post_id)
-) ENGINE=InnoDB
-	DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS comments (
-    post_id INTEGER NOT NULL,
-    comment CHAR(200) NOT NULL,
-    FOREIGN KEY(post_id) REFERENCES content(post_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS tags (
-    tag_id INTEGER NOT NULL AUTO_INCREMENT,
+    post_id INTEGER NOT NULL AUTO_INCREMENT,
+    timestamp BIGINT UNSIGNED NOT NULL,
+    description CHAR(200) NOT NULL,
     tag CHAR(200) NOT NULL,
-    PRIMARY KEY(tag_id),
-    UNIQUE KEY (tag_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS post_tags (
-    post_id INTEGER NOT NULL,
-    tag_id INTEGER NOT NULL,
-    FOREIGN KEY (tag_id) REFERENCES tags(tag_id),
-    FOREIGN KEY(post_id) REFERENCES content(post_id)
+    PRIMARY KEY(post_id),
+    FOREIGN KEY(user_id) REFERENCES account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS subscriptions_user (
@@ -71,8 +42,8 @@ CREATE TABLE IF NOT EXISTS subscriptions_user (
 
 CREATE TABLE IF NOT EXISTS subscriptions_tags (
     user_id INTEGER,
-    FOREIGN KEY(tag_id) REFERENCES tags(tag_id),
-    tag_id INTEGER NOT NULL
+    FOREIGN KEY(user_id) REFERENCES account(id),
+    tag CHAR(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS subscribers (
@@ -80,6 +51,11 @@ CREATE TABLE IF NOT EXISTS subscribers (
     FOREIGN KEY(user_id) REFERENCES account(id),
     subscriber_id INTEGER NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO account (username, fname, lname, password, timestamp)
+VALUES ('johnDoe@jd', 'John', 'Doe', 'jd123', '1');
+INSERT INTO account (username, fname, lname, password, timestamp)
+VALUES ('janeDoe@jd', 'Jane', 'Doe', 'jd123', '2');
 
 CREATE USER IF NOT EXISTS 'social'@'%' IDENTIFIED by 'social';
 

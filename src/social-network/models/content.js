@@ -20,45 +20,85 @@ async function storeImage(params) {
             storage.bucket(bucketName).file(user + '/' + post + '_medium' + extension),
             storage.bucket(bucketName).file(user + '/' + post + '_default' + extension)
         ];
-        const dimensions = [
-            {},
-            { width: 161, height: 161 },
-            { width: 612, height: 612 },
-            { width: 1080, height: 1080}
-        ]
+        // fit: contain ensures the images is exactly widthxheight, and will
+        // pad extra pixels with black (i.e. wide pictures get a black bar
+        // on the top and bottom
+        // fit: inside gives the image the flexibility to maintain
+        // their original aspect ratios
+        const dimensions = {
+            thumb: { width: 161, height: 161, fit: 'contain'},
+            med: { width: 612, height: 612, fit: 'contain' },
+            def: { width: 1080, height: 1080, fit: 'contain' }
+        }
         const metadata = {
             contentType: params.image.mimetype
         };
         
-        for (const type of files) {
-            var imageCopy = new Buffer.alloc(params.image.buffer.length);
-            params.image.buffer.copy(imageCopy);
-            console.log(type, dimensions[type]); 
-            console.log("original image:", params.image.buffer);
-            console.log("base buffer: ", imageCopy);
-            // Resize the image to be the proper rendition, 
-            // then upload it to gcloud storage
-            sharp(imageCopy)
-            .resize(dimensions[type])
-            .toBuffer()
-            .then( data => { // data is the converted buffer
-                var typeStream = new stream.PassThrough();
-                typeStream.end(data);
-                typeStream.pipe(files[type].createWriteStream({resumable: false, metadata:metadata})
-                .on('error', err => {
-                    console.log("Couldn't upload " + params.image.originalname + " " + type);
-                    reject(err);
-                })
-                .on('finish', () => {
-                    types[type].makePublic();
-                }));
-            }).catch( err => {
-                console.log("couldn't convert " + params.image.originalname + " " + type);
+        const original = sharp(params.image.buffer);
+        const thumbRendition   = original.clone().resize(dimensions.thumb);
+        const mediumRendition  = original.clone().resize(dimensions.med);
+        const defaultRendition = original.clone().resize(dimensions.def);
+
+        original.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[0].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload original of " + params.image.originalname);
                 reject(err);
+            })
+            .on('finish', () => {
+                files[0].makePublic().then( () => {
+                    console.log("uploaded original of " + params.image.originalname);
+                });
             });
-            console.log("did i happen after", type);
-        }
-    });
+        }).catch( err => { reject(err); });
+        thumbRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[1].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload thumbnail of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[1].makePublic().then( () => {
+                    console.log("uploaded thumbnail of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        mediumRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[2].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload medium of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[2].makePublic().then( () => {
+                    console.log("uploaded medium of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+        defaultRendition.toBuffer().then( data => {
+            var fileStream = new stream.PassThrough();
+            fileStream.end(data);
+            fileStream.pipe(files[3].createWriteStream({metadata:metadata}))
+            .on('error', err => { 
+                console.log("couldn't upload default of " + params.image.originalname);
+                reject(err);
+            })
+            .on('finish', () => {
+                files[3].makePublic().then( () => {
+                    console.log("uploaded default of " + params.image.originalname);
+                });
+            });
+        }).catch( err => { reject(err); });
+
+        fulfill();
+
+    }); // End of original promise
 }
 
 exports.createNewPost = function(params, callback) {
@@ -66,14 +106,20 @@ exports.createNewPost = function(params, callback) {
     console.log("new post params:", params);
     console.log("session", params.sess);
     var now = Date.now() / 1000;
-    var query = 'INSERT INTO content(user_id, timestamp) VALUES(?)';
+    var query = 'INSERT INTO content(user_id, timestamp, description, tag) VALUES(?)';
     var queryData = [[
         params.sess.user,
-        now 
+        now,
+	params.body.image_desc,
+	params.body.image_tags
     ]];
     conn.query(query, queryData, function(err, result) {
+	callback(err, result);
+	// delete closing tags if uncommenting block
+    });
+};
         // Fail fast if the insertion didn't go through 
-        if (err) {
+       /* if (err) {
             console.log("error adding content:", err);
             callback(err, result);
         } else {
@@ -121,10 +167,15 @@ exports.createNewPost = function(params, callback) {
             });
         }
     });
-};
+};*/
 
 exports.getPost = function(params, callback) {
-    var query = 'SELECT cn.*, cm.*, t.* FROM content cn, comments cm, tags t WHERE cn.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
+    var query = 'SELECT * FROM content WHERE post_id=(?);';
+    var queryData = [[params.post_id]];
+    conn.query(query, queryData, function(err, result) {
+	callback(err, result);
+    });
+    /*var query = 'SELECT cn.*, cm.*, t.* FROM content cn, comments cm, tags t WHERE cn.post_id = ? AND cm.post_id = ? AND t.post_id = ?';
     var queryData = [
 	params.post_id,
 	params.post_id,
@@ -134,14 +185,14 @@ exports.getPost = function(params, callback) {
     conn.query(query, queryData, function(err, result) {
         console.log("get post: ",result);
         callback(err, result);
-    });
+    });*/
 };
 
 
 exports.changePost = function(params, callback) {
-    var query = 'UPDATE comments SET comment = ? WHERE comments.post_id = ?';
+    var query = 'UPDATE content SET description = ? WHERE post_id = ?';
     var queryData = [
-	params.comment,
+	params.description,
 	params.post_id
     ];
     conn.query(query, queryData, function(err, result) {
@@ -151,14 +202,8 @@ exports.changePost = function(params, callback) {
 
 
 exports.deletePost = function(params, callback) {
-    var query = 'DELETE * FROM content cn, comments cm, tags t WHERE cn.user_id = ? AND cn.post_id = ? AND post_id = ? AND t.post_id = ?';
-    var queryData = [
-	params.user_id,
-	params.post_id,
-	params.post_id,
-	params.post_id,
-	params.post_id
-    ];
+    var query = 'DELETE * FROM content WHERE post_id = ?';
+    var queryData = [params.post_id];
     conn.query(query, queryData, function(err, result) {
         callback(err, result);
     });
